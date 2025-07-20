@@ -31,7 +31,7 @@ class ToEntityGenerator extends Generator {
 
         // Generar el header solo una vez
         if (!hasGeneratedHeader) {
-          final modelFileName = element.library?.source.shortName;
+          final modelFileName = element.source?.shortName;
           buffer.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
           buffer.writeln('');
           buffer.writeln("part of '$modelFileName';");
