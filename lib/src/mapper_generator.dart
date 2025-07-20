@@ -5,6 +5,15 @@ import 'package:build/build.dart';
 import 'package:entity_mapper_generator/entity_mapper_generator.dart';
 import 'package:source_gen/source_gen.dart';
 
+/// A code generator that creates `toEntity()` methods for classes annotated with [GenerateToEntity].
+/// 
+/// This generator analyzes classes marked with the [GenerateToEntity] annotation and
+/// automatically generates extension methods that convert model instances to entity instances.
+/// 
+/// The generated code includes:
+/// - Proper field mapping between model and entity
+/// - Support for nested model-to-entity conversions
+/// - Type-safe mapping based on constructor parameters
 class ToEntityGenerator extends Generator {
   @override
   String? generate(LibraryReader library, BuildStep buildStep) {
@@ -98,6 +107,12 @@ class ToEntityGenerator extends Generator {
   }
 }
 
+/// Creates a [Builder] that uses [ToEntityGenerator] to generate entity mapping code.
+/// 
+/// This builder is configured to:
+/// - Use the [ToEntityGenerator] for code generation
+/// - Generate files with the `.mapper.g.dart` extension
+/// - Process libraries that contain classes annotated with [GenerateToEntity]
 Builder toEntityBuilder(BuilderOptions options) {
   return LibraryBuilder(
     ToEntityGenerator(),
