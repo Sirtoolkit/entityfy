@@ -15,6 +15,12 @@ import 'package:source_gen/source_gen.dart';
 /// - Support for nested model-to-entity conversions
 /// - Type-safe mapping based on constructor parameters
 class ToEntityGenerator extends Generator {
+  /// Creates a new [ToEntityGenerator] instance.
+  /// 
+  /// This constructor is used by the build system to create instances of the generator
+  /// when processing annotated classes.
+  const ToEntityGenerator();
+
   @override
   String? generate(LibraryReader library, BuildStep buildStep) {
     final buffer = StringBuffer();
