@@ -9,7 +9,7 @@ import 'package:meta/meta_meta.dart';
 /// ## Example
 ///
 /// ```dart
-/// @GenerateToEntity(UserEntity)
+/// @EntityMapper(UserEntity)
 /// class UserModel {
 ///   final String name;
 ///   final String email;
@@ -31,15 +31,15 @@ import 'package:meta/meta_meta.dart';
 /// ```
 @Target({TargetKind.classType})
 @sealed
-class GenerateToEntity {
+class EntityMapper {
   /// The entity type to which the annotated class will be mapped.
   ///
   /// This should be the class that represents the entity version of your model.
 
   final Object entity;
 
-  /// Creates a [GenerateToEntity] annotation.
+  /// Creates a [EntityMapper] annotation.
   ///
   /// [entity] specifies the target entity class for the mapping.
-  const GenerateToEntity(this.entity);
+  const EntityMapper(this.entity);
 }

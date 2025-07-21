@@ -1,172 +1,124 @@
 # Entity Mapper Generator
 
-A powerful code generator for Dart that automatically creates `toEntity()` methods for converting models to entities using annotations. This package simplifies the process of mapping between your domain models and data layer entities.
+A powerful Dart code generator that automates the creation of `toEntity()` methods for seamless conversion between domain models and data layer entities using simple annotations.
 
-## Features
+## 📦 Packages
 
-- 🚀 **Automatic Code Generation**: Generate `toEntity()` methods with a simple annotation
-- 🔄 **Nested Model Support**: Automatically handles nested models with recursive entity conversion
-- 📝 **Type Safety**: Full type checking and validation during generation
-- 🛠️ **Build Runner Integration**: Seamless integration with Dart's build system
-- 🎯 **Zero Runtime Dependencies**: Generated code has no external dependencies
+This repository contains two main packages:
 
-## Getting Started
+### `entityfy`
 
-### Prerequisites
+The annotation package that provides the `@GenerateToEntity` annotation to mark classes for mapper generation.
 
-- Dart SDK ^3.8.0
-- `build_runner` package for code generation
+- **Version**: 1.0.0
+- **Dependencies**: None at runtime (only meta for annotations)
+- **Purpose**: Provides annotations for marking classes that need entity mapping
 
-### Installation
+**Key Features:**
+- 🎯 Simple `@GenerateToEntity` annotation
+- 📝 Zero runtime dependencies
+- 🚀 Easy to use
 
-Add the package to your `pubspec.yaml`:
+### `entityfy_generator`
+
+The code generator that processes the annotations and automatically generates `toEntity()` methods.
+
+- **Version**: 1.0.0
+- **Dependencies**: `source_gen`, `build`, `analyzer`, `meta`
+- **Purpose**: Generates mapping methods between models and entities
+
+**Key Features:**
+- 🔄 Support for nested models
+- 🛠️ Integration with `build_runner`
+- 📊 Type-safe mapping generation
+- 🎨 Clean extension-based output
+
+## 🚀 Installation
+
+Add the packages to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  entity_mapper_generator: ^1.0.0
+  entityfy: ^1.0.0
 
 dev_dependencies:
+  entityfy_generator: ^1.0.0
   build_runner: ^2.4.15
 ```
 
-## Usage
+## 🛠️ Usage
 
 ### Basic Example
 
 ```dart
-import 'package:entity_mapper_generator/entity_mapper_generator.dart';
+import 'package:entityfy/entityfy.dart';
 
-// Your entity classes
-class AddressEntity {
-  final String street;
-  final String city;
-  final String country;
-
-  const AddressEntity({
-    required this.street,
-    required this.city,
-    required this.country,
-  });
-}
-
+// Entity class (data layer)
 class UserEntity {
   final String id;
   final String name;
-  final AddressEntity address;
+  final String email;
 
   const UserEntity({
     required this.id,
     required this.name,
-    required this.address,
+    required this.email,
   });
 }
 
-// Your model classes with annotations
-@GenerateToEntity(AddressEntity)
-class Address {
-  final String street;
-  final String city;
-  final String country;
-
-  const Address({
-    required this.street,
-    required this.city,
-    required this.country,
-  });
-}
-
+// Domain model with annotation
 @GenerateToEntity(UserEntity)
-class User {
+class UserModel {
   final String id;
   final String name;
-  final Address address;
+  final String email;
 
-  const User({
+  const UserModel({
     required this.id,
     required this.name,
-    required this.address,
+    required this.email,
   });
 }
 
-// Don't forget to include the generated part
-part 'user.mapper.g.dart';
+// Include the generated file
+part 'user_model.mapper.g.dart';
 ```
+
+### Generate the code
+
+```bash
+dart run build_runner build
+```
+
 ### Generated Code
 
-After running the code generator, you'll get a `.mapper.g.dart` file with the generated `toEntity()` method:
+The generator will create a `.mapper.g.dart` file with:
 
 ```dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'user_model.dart';
 
-extension UserMapper on User {
+extension UserModelMapper on UserModel {
   UserEntity toEntity() {
     return UserEntity(
       id: id,
       name: name,
-      address: address.toEntity(),
-    );
-  }
-}
-
-extension AddressMapper on Address {
-  AddressEntity toEntity() {
-    return AddressEntity(
-      street: street,
-      city: city,
-      country: country,
+      email: email,
     );
   }
 }
 ```
 
-### Running the Generator
+## 📖 Documentation
 
-Run the code generator using build_runner:
+- **entityfy**: See [packages/entityfy/README.md](packages/entityfy/README.md) for detailed usage
+- **entityfy_generator**: See [packages/entityfy_generator/README.md](packages/entityfy_generator/README.md) for generator details
 
-```bash
-# Generate code once
-dart run build_runner build
+## 🤝 Contributing
 
-# Watch for changes and regenerate automatically
-dart run build_runner watch
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-# Clean and regenerate
-dart run build_runner clean
-dart run build_runner build
-```
-
-## How It Works
-
-1. **Annotation Processing**: The generator scans your code for classes annotated with `@GenerateToEntity`
-2. **Type Analysis**: Analyzes the model and entity classes to understand their structure
-3. **Code Generation**: Creates extension methods with `toEntity()` functions
-4. **Nested Handling**: Automatically detects and handles nested models that also have the annotation
-
-## Best Practices
-
-- **Consistent Naming**: Use clear, descriptive names for your models and entities
-- **Type Matching**: Ensure your model and entity fields have compatible types
-- **Part Files**: Always include the generated part file in your model classes
-- **Clean Builds**: Use `build_runner clean` when you encounter generation issues
-
-## Limitations
-
-- Entity classes must have an unnamed constructor
-- Field names must match between model and entity
-- Nested models must also be annotated with `@GenerateToEntity`
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## References
-
-- [Dart Code Generation](https://dart.dev/tools/build_runner)
-- [Source Generation](https://pub.dev/packages/source_gen)
-- [Build Package](https://pub.dev/packages/build)

@@ -5,9 +5,9 @@ import 'package:build/build.dart';
 import 'package:entityfy/entityfy.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// A code generator that creates `toEntity()` methods for classes annotated with [GenerateToEntity].
+/// A code generator that creates `toEntity()` methods for classes annotated with [EntityMapper].
 ///
-/// This generator analyzes classes marked with the [GenerateToEntity] annotation and
+/// This generator analyzes classes marked with the [EntityMapper] annotation and
 /// automatically generates extension methods that convert model instances to entity instances.
 ///
 /// The generated code includes:
@@ -24,15 +24,15 @@ class EntityfyGenerator extends Generator {
 
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
-        GenerateToEntity,
+        EntityMapper,
       ).firstAnnotationOf(element);
       if (annotation != null) annotatedClasses.add(element.name ?? '');
     }
 
-    // Buscar todas las clases anotadas con @GenerateToEntity
+    // Buscar todas las clases anotadas con @EntityMapper
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
-        GenerateToEntity,
+        EntityMapper,
       ).firstAnnotationOf(element);
 
       if (annotation != null) {
@@ -68,7 +68,7 @@ class EntityfyGenerator extends Generator {
             field.name: field,
         };
 
-        final toEntityChecker = TypeChecker.fromRuntime(GenerateToEntity);
+        final toEntityChecker = TypeChecker.fromRuntime(EntityMapper);
 
         final entityConstructor =
             (entityType.element as ClassElement).unnamedConstructor;
@@ -112,7 +112,7 @@ class EntityfyGenerator extends Generator {
 /// This builder is configured to:
 /// - Use the [EntityfyGenerator] for code generation
 /// - Generate files with the `.mapper.g.dart` extension
-/// - Process libraries that contain classes annotated with [GenerateToEntity]
+/// - Process libraries that contain classes annotated with [EntityMapper]
 Builder entityfyGenerator(BuilderOptions options) {
   return LibraryBuilder(
     EntityfyGenerator(),
