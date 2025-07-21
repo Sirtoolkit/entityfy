@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: entityfy
+dependency_overrides:
+  entityfy:
+    path: ../entityfy

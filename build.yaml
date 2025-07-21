@@ -1,7 +1,0 @@
-builders:
-  to_entity_builder:
-    import: "package:entity_mapper_generator/src/mapper_generator.dart"
-    builder_factories: ["toEntityBuilder"]
-    build_extensions: {".dart": [".mapper.g.dart"]}
-    auto_apply: dependents
-    build_to: source

@@ -18,6 +18,7 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     - public_member_api_docs
+
 # analyzer:
 #   exclude:
 #     - path/to/excluded/files/**
