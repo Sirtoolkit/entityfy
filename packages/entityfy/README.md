@@ -63,7 +63,7 @@ class UserEntity {
 }
 
 // Your model classes with annotations
-@GenerateToEntity(AddressEntity)
+@EntityMapper(AddressEntity)
 class Address {
   final String street;
   final String city;
@@ -76,7 +76,7 @@ class Address {
   });
 }
 
-@GenerateToEntity(UserEntity)
+@EntityMapper(UserEntity)
 class User {
   final String id;
   final String name;
@@ -133,7 +133,7 @@ dart run build_runner build
 
 ## How It Works
 
-1. **Annotation Processing**: The generator scans your code for classes annotated with `@GenerateToEntity`
+1. **Annotation Processing**: The generator scans your code for classes annotated with `@EntityMapper`
 2. **Type Analysis**: Analyzes the model and entity classes to understand their structure
 3. **Code Generation**: Creates extension methods with `toEntity()` functions
 4. **Nested Handling**: Automatically detects and handles nested models that also have the annotation

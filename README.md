@@ -1,4 +1,4 @@
-# Entity Mapper Generator
+# Entityfy
 
 A powerful Dart code generator that automates the creation of `toEntity()` methods for seamless conversion between domain models and data layer entities using simple annotations.
 
@@ -8,14 +8,14 @@ This repository contains two main packages:
 
 ### `entityfy`
 
-The annotation package that provides the `@GenerateToEntity` annotation to mark classes for mapper generation.
+The annotation package that provides the `@EntityMapper` annotation to mark classes for mapper generation.
 
 - **Version**: 1.0.0
 - **Dependencies**: None at runtime (only meta for annotations)
 - **Purpose**: Provides annotations for marking classes that need entity mapping
 
 **Key Features:**
-- 🎯 Simple `@GenerateToEntity` annotation
+- 🎯 Simple `@EntityMapper` annotation
 - 📝 Zero runtime dependencies
 - 🚀 Easy to use
 
@@ -67,7 +67,7 @@ class UserEntity {
 }
 
 // Domain model with annotation
-@GenerateToEntity(UserEntity)
+@EntityMapper(UserEntity)
 class UserModel {
   final String id;
   final String name;
