@@ -1,6 +1,6 @@
 // lib/src/to_entity_generator.dart
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/build.dart';
 import 'package:entityfy/entityfy.dart';
 import 'package:source_gen/source_gen.dart';
@@ -26,7 +26,7 @@ class EntityfyGenerator extends Generator {
       final annotation = TypeChecker.fromRuntime(
         EntityMapper,
       ).firstAnnotationOf(element);
-      if (annotation != null) annotatedClasses.add(element.name ?? '');
+      if (annotation != null) annotatedClasses.add(element.name3 ?? '');
     }
 
     // Buscar todas las clases anotadas con @EntityMapper
@@ -40,7 +40,7 @@ class EntityfyGenerator extends Generator {
 
         // Generar el header solo una vez
         if (!hasGeneratedHeader) {
-          final modelFileName = element.source?.shortName;
+          final modelFileName = element.library2?.uri.pathSegments.last;
           buffer.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
           buffer.writeln('');
           buffer.writeln("part of '$modelFileName';");
@@ -52,46 +52,51 @@ class EntityfyGenerator extends Generator {
         final entityTypeName = entityType.getDisplayString();
 
         // Generar la extensión para esta clase
-        buffer.writeln('extension ${element.name}Mapper on ${element.name} {');
+        buffer.writeln(
+          'extension ${element.name3}Mapper on ${element.name3} {',
+        );
         buffer.writeln('  $entityTypeName toEntity() {');
         buffer.writeln('    return $entityTypeName(');
 
-        final classElement = element as ClassElement;
+        final classElement = element as ClassElement2;
 
         final allFields = {
           for (var field
               in classElement.allSupertypes
                   .expand(
-                    (type) => type.element.children.whereType<FieldElement>(),
+                    (type) =>
+                        type.element3.children2.whereType<FieldElement2>(),
                   )
-                  .followedBy(classElement.fields))
-            field.name: field,
+                  .followedBy(classElement.fields2))
+            field.name3: field,
         };
 
         final toEntityChecker = TypeChecker.fromRuntime(EntityMapper);
 
         final entityConstructor =
-            (entityType.element as ClassElement).unnamedConstructor;
+            (entityType.element3 as ClassElement2).unnamedConstructor2;
 
         if (entityConstructor != null) {
-          for (final param in entityConstructor.parameters) {
-            final modelField = allFields[param.name];
+          for (final param in entityConstructor.formalParameters) {
+            final modelField = allFields[param.name3];
             if (modelField == null) continue;
 
             final modelFieldType = switch (modelField) {
-              FieldElement field => field.type,
+              FieldElement2 field => field.type,
             };
 
             final entityFieldType = param.type;
 
             final isNestedModel =
-                modelFieldType.element != null &&
-                toEntityChecker.hasAnnotationOf(modelFieldType.element!);
+                modelFieldType.element3 != null &&
+                toEntityChecker.hasAnnotationOf(modelFieldType.element3!);
 
             if (isNestedModel && modelFieldType != entityFieldType) {
-              buffer.writeln('      ${param.name}: ${param.name}.toEntity(),');
+              buffer.writeln(
+                '      ${param.name3}: ${param.name3}.toEntity(),',
+              );
             } else {
-              buffer.writeln('      ${param.name}: ${param.name},');
+              buffer.writeln('      ${param.name3}: ${param.name3},');
             }
           }
         }

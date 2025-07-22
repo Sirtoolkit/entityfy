@@ -7,11 +7,10 @@ environment:
   sdk: ^3.8.0
 
 dependencies:
-  source_gen: ^2.0.0
-  build: ^2.5.4
-  analyzer: ^7.0.0
-  entityfy:
-    path: ../entityfy
+  source_gen: ^3.0.0
+  build: ^3.0.0
+  analyzer: ^7.4.0
+  entityfy: ^1.0.0
 
 dev_dependencies:
   lints: ^6.0.0
