@@ -1,14 +1,15 @@
 name: entityfy_generator
 description: Dart code generator that creates extension methods to map model classes to entity classes using annotations. Simplifies the implementation of toEntity() methods for clean data transformation between layers.
-version: 1.1.0
+version: 1.2.0
 homepage: https://github.com/Sirtoolkit/entityfy.git
+repository: https://github.com/Sirtoolkit/entityfy.git 
 
 environment:
   sdk: ^3.8.0
 
 dependencies:
-  source_gen: ^3.0.0
-  build: ^3.0.0
+  source_gen: ^2.0.0
+  build: ^2.5.4
   analyzer: ^7.4.0
   entityfy: ^1.0.0
 
