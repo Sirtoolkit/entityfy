@@ -1,0 +1,19 @@
+name: entityfy_generator_example
+description: Example usage of the entityfy_generator package
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  entityfy:
+    path: ../../entityfy/
+  entityfy_generator:
+    path: ../
+  build_runner: ^2.5.4
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.26.2

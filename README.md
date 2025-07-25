@@ -1,37 +1,14 @@
 # Entityfy
 
-A powerful Dart code generator that automates the creation of `toEntity()` methods for seamless conversion between domain models and data layer entities using simple annotations.
+Dart code generator that automates the creation of `toEntity()` and `toUiModel()` methods for conversion between domain models, data entities, and UI models.
 
 ## 📦 Packages
 
-This repository contains two main packages:
+### `entityfy` (v2.0.0)
+Annotation package that provides `@Entityfy` to mark classes that need mapping generation.
 
-### `entityfy`
-
-The annotation package that provides the `@EntityMapper` annotation to mark classes for mapper generation.
-
-- **Version**: 1.0.0
-- **Dependencies**: None at runtime (only meta for annotations)
-- **Purpose**: Provides annotations for marking classes that need entity mapping
-
-**Key Features:**
-- 🎯 Simple `@EntityMapper` annotation
-- 📝 Zero runtime dependencies
-- 🚀 Easy to use
-
-### `entityfy_generator`
-
-The code generator that processes the annotations and automatically generates `toEntity()` methods.
-
-- **Version**: 1.0.0
-- **Dependencies**: `source_gen`, `build`, `analyzer`, `meta`
-- **Purpose**: Generates mapping methods between models and entities
-
-**Key Features:**
-- 🔄 Support for nested models
-- 🛠️ Integration with `build_runner`
-- 📊 Type-safe mapping generation
-- 🎨 Clean extension-based output
+### `entityfy_generator` (v2.0.0)
+Code generator that processes annotations and automatically creates `toEntity()` and `toUiModel()` methods with class generation.
 
 ## 🚀 Installation
 
@@ -39,75 +16,11 @@ Add the packages to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  entityfy: ^1.0.0
+  entityfy: ^2.0.0
 
 dev_dependencies:
-  entityfy_generator: ^1.0.0
+  entityfy_generator: ^2.0.0
   build_runner: ^2.4.15
-```
-
-## 🛠️ Usage
-
-### Basic Example
-
-```dart
-import 'package:entityfy/entityfy.dart';
-
-// Entity class (data layer)
-class UserEntity {
-  final String id;
-  final String name;
-  final String email;
-
-  const UserEntity({
-    required this.id,
-    required this.name,
-    required this.email,
-  });
-}
-
-// Domain model with annotation
-@EntityMapper(UserEntity)
-class UserModel {
-  final String id;
-  final String name;
-  final String email;
-
-  const UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-  });
-}
-
-// Include the generated file
-part 'user_model.mapper.g.dart';
-```
-
-### Generate the code
-
-```bash
-dart run build_runner build
-```
-
-### Generated Code
-
-The generator will create a `.mapper.g.dart` file with:
-
-```dart
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-part of 'user_model.dart';
-
-extension UserModelMapper on UserModel {
-  UserEntity toEntity() {
-    return UserEntity(
-      id: id,
-      name: name,
-      email: email,
-    );
-  }
-}
 ```
 
 ## 📖 Documentation

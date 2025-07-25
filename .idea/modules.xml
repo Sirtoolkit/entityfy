@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/packages/entityfy/melos_entityfy.iml" filepath="$PROJECT_DIR$/packages/entityfy/melos_entityfy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/entityfy/example/melos_entityfy_example.iml" filepath="$PROJECT_DIR$/packages/entityfy/example/melos_entityfy_example.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/entityfy_generator/melos_entityfy_generator.iml" filepath="$PROJECT_DIR$/packages/entityfy_generator/melos_entityfy_generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/entityfy_generator/example/melos_entityfy_generator_example.iml" filepath="$PROJECT_DIR$/packages/entityfy_generator/example/melos_entityfy_generator_example.iml" />
       <module fileurl="file://$PROJECT_DIR$/melos_entity_mapper_generator.iml" filepath="$PROJECT_DIR$/melos_entity_mapper_generator.iml" />
     </modules>
   </component>
