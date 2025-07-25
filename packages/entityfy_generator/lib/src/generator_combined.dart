@@ -122,8 +122,9 @@ class CombinedEntityfyGenerator extends Generator {
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
-        final type = param.type.getDisplayString(withNullability: true);
-        buffer.writeln('  final $type ${param.name};');
+        final type = param.type;
+        final typeName = _convertTypeToEntityType(type);
+        buffer.writeln('  final $typeName ${param.name};');
       }
 
       buffer.writeln('');
@@ -155,7 +156,17 @@ class CombinedEntityfyGenerator extends Generator {
         } else if (type.isDartCoreBool) {
           buffer.writeln("      $paramName: json['$paramName'] as bool? ?? false,");
         } else if (type.isDartCoreList) {
-          buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+          // Handle List types with proper element type casting
+          final listElementType = type is InterfaceType && type.typeArguments.isNotEmpty
+              ? type.typeArguments.first
+              : null;
+          
+          if (listElementType != null) {
+            final elementTypeName = listElementType.getDisplayString(withNullability: false);
+            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],");
+          } else {
+            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+          }
         } else if (type.toString().contains('DateTime')) {
           buffer.writeln("      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),");
         } else {
@@ -200,8 +211,9 @@ class CombinedEntityfyGenerator extends Generator {
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
-        final type = param.type.getDisplayString(withNullability: true);
-        buffer.writeln('  final $type ${param.name};');
+        final type = param.type;
+        final typeName = _convertTypeToUiModelType(type);
+        buffer.writeln('  final $typeName ${param.name};');
       }
 
       buffer.writeln('');
@@ -233,7 +245,17 @@ class CombinedEntityfyGenerator extends Generator {
         } else if (type.isDartCoreBool) {
           buffer.writeln("      $paramName: json['$paramName'] as bool? ?? false,");
         } else if (type.isDartCoreList) {
-          buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+          // Handle List types with proper element type casting
+          final listElementType = type is InterfaceType && type.typeArguments.isNotEmpty
+              ? type.typeArguments.first
+              : null;
+          
+          if (listElementType != null) {
+            final elementTypeName = listElementType.getDisplayString(withNullability: false);
+            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],");
+          } else {
+            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+          }
         } else if (type.toString().contains('DateTime')) {
           buffer.writeln("      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),");
         } else {
@@ -390,6 +412,60 @@ class CombinedEntityfyGenerator extends Generator {
       return '${className.substring(0, className.length - 6)}UiModel';
     }
     return '${className}UiModel';
+  }
+
+  /// Converts types to their entity equivalents when applicable
+  String _convertTypeToEntityType(DartType type) {
+    final typeString = type.getDisplayString(withNullability: true);
+    
+    // Handle List types
+    if (type.isDartCoreList && type is InterfaceType && type.typeArguments.isNotEmpty) {
+      final elementType = type.typeArguments.first;
+      final convertedElementType = _convertTypeToEntityType(elementType);
+      final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+      return 'List<$convertedElementType>$nullability';
+    }
+    
+    // Handle custom classes that might have @GenerateEntity annotation
+    if (type.element != null) {
+      final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+      if (toEntityChecker.hasAnnotationOf(type.element!)) {
+        final className = type.element!.name!;
+        final entityName = _getEntityName(className);
+        final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+        return '$entityName$nullability';
+      }
+    }
+    
+    // Return original type for primitive types and non-annotated classes
+    return typeString;
+  }
+
+  /// Converts types to their UI model equivalents when applicable
+  String _convertTypeToUiModelType(DartType type) {
+    final typeString = type.getDisplayString(withNullability: true);
+    
+    // Handle List types
+    if (type.isDartCoreList && type is InterfaceType && type.typeArguments.isNotEmpty) {
+      final elementType = type.typeArguments.first;
+      final convertedElementType = _convertTypeToUiModelType(elementType);
+      final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+      return 'List<$convertedElementType>$nullability';
+    }
+    
+    // Handle custom classes that might have @GenerateEntity annotation
+    if (type.element != null) {
+      final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+      if (toEntityChecker.hasAnnotationOf(type.element!)) {
+        final className = type.element!.name!;
+        final uiModelName = _getUiModelName(className);
+        final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+        return '$uiModelName$nullability';
+      }
+    }
+    
+    // Return original type for primitive types and non-annotated classes
+    return typeString;
   }
 }
 
