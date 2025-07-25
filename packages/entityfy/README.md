@@ -1,14 +1,17 @@
 # Entityfy
 
-A powerful code generator for Dart that automatically creates `toEntity()` methods for converting models to entities using annotations. This package simplifies the process of mapping between your domain models and data layer entities.
+A powerful code generator for Dart that automatically creates Entity and UI Model classes with conversion methods using simple annotations. This package streamlines the process of implementing Clean Architecture patterns by generating complete classes and mappers for seamless data transformation between layers.
 
 ## Features
 
-- 🚀 **Automatic Code Generation**: Generate `toEntity()` methods with a simple annotation
-- 🔄 **Nested Model Support**: Automatically handles nested models with recursive entity conversion
-- 📝 **Type Safety**: Full type checking and validation during generation
+- 🚀 **Complete Class Generation**: Generate Entity and UI Model classes with a single annotation
+- 🔄 **Bidirectional Mapping**: Automatic `toEntity()` and `toUiModel()` conversion methods
+- 🏗️ **Clean Architecture Ready**: Perfect for implementing domain-driven design patterns
+- 📝 **Type Safety**: Full type checking and validation during code generation
 - 🛠️ **Build Runner Integration**: Seamless integration with Dart's build system
 - 🎯 **Zero Runtime Dependencies**: Generated code has no external dependencies
+- 🔗 **Nested Model Support**: Automatically handles complex nested structures with recursive conversion
+- ⚙️ **Flexible Configuration**: Choose what to generate with boolean flags (`generateEntity`, `generateUiModel`)
 
 ## Getting Started
 
@@ -23,100 +26,206 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  entityfy: ^1.0.0
+  entityfy: ^2.0.0
 
 dev_dependencies:
-  entityfy_generator: ^1.0.0 
+  entityfy_generator: ^2.0.0 
   build_runner: ^2.4.15
 ```
 
 ## Usage
 
-### Basic Example
+### Complete Class Generation Example
+
+With Entityfy 2.0, you can generate complete classes and mappers with a single annotation:
 
 ```dart
 import 'package:entityfy/entityfy.dart';
 
-// Your entity classes
-class AddressEntity {
+// Model class that generates both Entity and UI Model classes
+@Entityfy(generateEntity: true, generateUiModel: true)
+class UserModel {
+  final String id;
+  final String name;
+  final String email;
+  final AddressModel address;
+  final List<String> tags;
+
+  const UserModel({
+    required this.id,
+    required this.name, 
+    required this.email,
+    required this.address,
+    required this.tags,
+  });
+}
+
+// Nested model class
+@Entityfy(generateEntity: true, generateUiModel: true)
+class AddressModel {
   final String street;
   final String city;
   final String country;
+  final String zipCode;
 
-  const AddressEntity({
+  const AddressModel({
     required this.street,
     required this.city,
     required this.country,
-  });
-}
-
-class UserEntity {
-  final String id;
-  final String name;
-  final AddressEntity address;
-
-  const UserEntity({
-    required this.id,
-    required this.name,
-    required this.address,
-  });
-}
-
-// Your model classes with annotations
-@EntityMapper(AddressEntity)
-class Address {
-  final String street;
-  final String city;
-  final String country;
-
-  const Address({
-    required this.street,
-    required this.city,
-    required this.country,
-  });
-}
-
-@EntityMapper(UserEntity)
-class User {
-  final String id;
-  final String name;
-  final Address address;
-
-  const User({
-    required this.id,
-    required this.name,
-    required this.address,
+    required this.zipCode,
   });
 }
 
 // Don't forget to include the generated part
-part 'user.mapper.g.dart';
+part 'user_model.entityfy.g.dart';
 ```
+
+### Entity-Only Generation
+
+If you only need entity classes and mappers:
+
+```dart
+@Entityfy(generateEntity: true)
+class ProductModel {
+  final String id;
+  final String name;
+  final double price;
+  final DateTime createdAt;
+  final List<CategoryModel> categories;
+
+  const ProductModel({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.createdAt,
+    required this.categories,
+  });
+}
+
+@Entityfy(generateEntity: true)  
+class CategoryModel {
+  final String id;
+  final String name;
+
+  const CategoryModel({
+    required this.id,
+    required this.name,
+  });
+}
+
+part 'product_model.entityfy.g.dart';
+```
+
+### UI Model-Only Generation
+
+For generating UI models from existing entity classes:
+
+```dart
+@Entityfy(generateUiModel: true)
+class UserEntity {
+  final String id;
+  final String name;
+  final String email;
+  final bool isActive;
+
+  const UserEntity({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.isActive,
+  });
+}
+
+part 'user_entity.entityfy.g.dart';
+```
+
 ### Generated Code
 
-After running the code generator, you'll get a `.mapper.g.dart` file with the generated `toEntity()` method:
+After running the code generator, you'll get a `.entityfy.g.dart` file with complete classes and mappers:
 
 ```dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'user_model.dart';
 
-extension UserMapper on User {
+// Generated Entity Class
+class UserEntity {
+  final String id;
+  final String name;
+  final String email;
+  final AddressEntity address;
+  final List<String> tags;
+
+  const UserEntity({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.address,
+    required this.tags,
+  });
+
+  factory UserEntity.fromJson(Map<String, dynamic> json) {
+    return UserEntity(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      address: AddressEntity.fromJson(json['address']),
+      tags: (json['tags'] as List<dynamic>?)?.cast<String>() ?? [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'address': address.toJson(),
+      'tags': tags,
+    };
+  }
+}
+
+// Generated UI Model Class  
+class UserUiModel {
+  final String id;
+  final String name;
+  final String email;
+  final AddressUiModel address;
+  final List<String> tags;
+
+  const UserUiModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.address,
+    required this.tags,
+  });
+
+  // ... similar fromJson/toJson methods
+}
+
+// Generated Entity Mapper Extension
+extension UserModelEntityMapper on UserModel {
   UserEntity toEntity() {
     return UserEntity(
       id: id,
       name: name,
+      email: email,
       address: address.toEntity(),
+      tags: tags,
     );
   }
 }
 
-extension AddressMapper on Address {
-  AddressEntity toEntity() {
-    return AddressEntity(
-      street: street,
-      city: city,
-      country: country,
+// Generated UI Model Mapper Extension
+extension UserEntityUiModelMapper on UserEntity {
+  UserUiModel toUiModel() {
+    return UserUiModel(
+      id: id,
+      name: name,
+      email: email,
+      address: address.toUiModel(),
+      tags: tags,
     );
   }
 }
@@ -133,17 +242,23 @@ dart run build_runner build
 
 ## How It Works
 
-1. **Annotation Processing**: The generator scans your code for classes annotated with `@EntityMapper`
-2. **Type Analysis**: Analyzes the model and entity classes to understand their structure
-3. **Code Generation**: Creates extension methods with `toEntity()` functions
-4. **Nested Handling**: Automatically detects and handles nested models that also have the annotation
+1. **Annotation Processing**: The generator scans your code for classes annotated with `@Entityfy`
+2. **Configuration Analysis**: Reads boolean flags (`generateEntity`, `generateUiModel`) to determine what to generate
+3. **Class Generation**: Creates complete Entity and/or UI Model classes with constructors, `fromJson()`, and `toJson()` methods
+4. **Type Analysis**: Analyzes the source classes to understand their structure and relationships
+5. **Mapper Generation**: Creates extension methods with `toEntity()` and `toUiModel()` functions
+6. **Nested Handling**: Automatically detects nested models and applies recursive conversion
+7. **Combined Output**: Generates all code in a single `.entityfy.g.dart` file per source file
 
 ## Best Practices
 
-- **Consistent Naming**: Use clear, descriptive names for your models and entities
-- **Type Matching**: Ensure your model and entity fields have compatible types
-- **Part Files**: Always include the generated part file in your model classes
-- **Clean Builds**: Use `build_runner clean` when you encounter generation issues
+- **Consistent Naming**: Use clear, descriptive names for your models (e.g., `UserModel`, `ProductModel`)
+- **Annotation Strategy**: Choose appropriate flags based on your architecture needs
+- **Type Matching**: Ensure compatible types between generated classes and existing code
+- **Part Files**: Always include the generated `.entityfy.g.dart` part file in your source classes
+- **Clean Builds**: Use `dart run build_runner clean` when encountering generation issues
+- **Nested Models**: Annotate all nested models that need conversion for automatic recursive mapping
+- **DateTime Handling**: The generator automatically handles DateTime serialization with ISO8601 format
 
 ## Clean Architecture Integration
 
@@ -167,21 +282,47 @@ This package is **highly recommended** when implementing **Clean Architecture** 
 
 ```dart
 // Data Layer (External)
-@EntityMapper(UserEntity)
+@Entityfy(generateEntity: true)
 class UserModel {
   final String id;
   final String email;
   final AddressModel address;
-  // ... JSON serialization logic
+  
+  const UserModel({
+    required this.id,
+    required this.email,
+    required this.address,
+  });
+  
+  // JSON serialization logic would be here
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+    id: json['id'],
+    email: json['email'],
+    address: AddressModel.fromJson(json['address']),
+  );
 }
 
-// Domain Layer (Core Business Logic)
-class UserEntity {
-  final String id;
-  final String email;
-  final AddressEntity address;
-  // ... Pure business logic, no external dependencies
+@Entityfy(generateEntity: true)
+class AddressModel {
+  final String street;
+  final String city;
+  
+  const AddressModel({
+    required this.street,
+    required this.city,
+  });
+  
+  factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
+    street: json['street'],
+    city: json['city'],
+  );
 }
+
+// Generated classes will be:
+// - UserEntity (pure domain entity)
+// - AddressEntity (pure domain entity)  
+// - UserModel.toEntity() extension method
+// - AddressModel.toEntity() extension method
 
 // Usage in Repository (Data → Domain)
 class UserRepository {
@@ -201,9 +342,11 @@ Before implementing, ensure your team understands:
 
 ## Limitations
 
-- Entity classes must have an unnamed constructor
-- Field names must match between model and entity
-- Nested models must also be annotated with `@EntityMapper`
+- At least one of `generateEntity` or `generateUiModel` must be set to `true` in the annotation
+- Generated classes use unnamed constructors with named parameters
+- Complex generic types beyond `List<T>` may require manual handling
+- Nested models must also be annotated with `@Entityfy` for automatic conversion
+- Generated file extension is always `.entityfy.g.dart`
 
 ## Contributing
 

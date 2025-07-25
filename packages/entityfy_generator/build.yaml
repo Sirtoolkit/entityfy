@@ -1,6 +1,6 @@
 builders:
   entityfy_combined:
-    import: "package:entityfy_generator/src/generator_combined.dart"
+    import: "package:entityfy_generator/src/entityfy_generator.dart"
     builder_factories: ["combinedEntityfyGenerator"]
     build_extensions: { ".dart": [".entityfy.g.dart"] }
     auto_apply: dependents

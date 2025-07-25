@@ -15,7 +15,7 @@ import 'package:meta/meta_meta.dart';
 ///
 /// Generate only entity:
 /// ```dart
-/// @GenerateEntity(generateEntity: true)
+/// @Entityfy(generateEntity: true)
 /// @freezed
 /// abstract class CustomerModel with _$CustomerModel {
 ///   const factory CustomerModel({
@@ -28,7 +28,7 @@ import 'package:meta/meta_meta.dart';
 ///
 /// Generate entity and UI model:
 /// ```dart
-/// @GenerateEntity(generateEntity: true, generateUiModel: true)
+/// @Entityfy(generateEntity: true, generateUiModel: true)
 /// class CustomerModel {
 ///   final String id;
 ///   final String name;
@@ -39,7 +39,7 @@ import 'package:meta/meta_meta.dart';
 ///
 /// Generate only UI model mapper:
 /// ```dart
-/// @GenerateEntity(generateUiModel: true)
+/// @Entityfy(generateUiModel: true)
 /// class CustomerEntity {
 ///   final String id;
 ///   final String name;
@@ -49,20 +49,20 @@ import 'package:meta/meta_meta.dart';
 /// Generates: `CustomerUiModel` class + `CustomerEntity.toUiModel()` mapper
 @Target({TargetKind.classType})
 @sealed
-class GenerateEntity {
+class Entityfy {
   /// Whether to generate an entity class and toEntity() mapper.
-  /// Default: false
+  /// Default: true 
   final bool generateEntity;
 
   /// Whether to generate a UI model class and toUiModel() mapper.
   /// Default: false
   final bool generateUiModel;
 
-  /// Creates a [GenerateEntity] annotation.
+  /// Creates an [Entityfy] annotation.
   ///
   /// At least one of [generateEntity] or [generateUiModel] must be true.
-  const GenerateEntity({
-    this.generateEntity = false,
+  const Entityfy({
+    this.generateEntity = true,
     this.generateUiModel = false,
   }) : assert(
          generateEntity || generateUiModel,

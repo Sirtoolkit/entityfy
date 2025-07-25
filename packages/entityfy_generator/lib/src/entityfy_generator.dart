@@ -23,7 +23,7 @@ class CombinedEntityfyGenerator extends Generator {
     bool hasGeneratedHeader = false;
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(GenerateEntity).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
@@ -42,7 +42,7 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(GenerateEntity).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
@@ -61,7 +61,7 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(GenerateEntity).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
@@ -80,7 +80,7 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(GenerateEntity).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
@@ -302,7 +302,7 @@ class CombinedEntityfyGenerator extends Generator {
         field.name: field,
     };
 
-    final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+    final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
 
     final constructor = element.constructors
         .where((c) => c.isFactory || (c.isConst && !c.isFactory))
@@ -358,7 +358,7 @@ class CombinedEntityfyGenerator extends Generator {
         field.name: field,
     };
 
-    final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+    final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
 
     final constructor = element.constructors
         .where((c) => c.isFactory || (c.isConst && !c.isFactory))
@@ -426,9 +426,9 @@ class CombinedEntityfyGenerator extends Generator {
       return 'List<$convertedElementType>$nullability';
     }
     
-    // Handle custom classes that might have @GenerateEntity annotation
+    // Handle custom classes that might have @Entityfy annotation
     if (type.element != null) {
-      final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+      final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
       if (toEntityChecker.hasAnnotationOf(type.element!)) {
         final className = type.element!.name!;
         final entityName = _getEntityName(className);
@@ -453,9 +453,9 @@ class CombinedEntityfyGenerator extends Generator {
       return 'List<$convertedElementType>$nullability';
     }
     
-    // Handle custom classes that might have @GenerateEntity annotation
+    // Handle custom classes that might have @Entityfy annotation
     if (type.element != null) {
-      final toEntityChecker = TypeChecker.fromRuntime(GenerateEntity);
+      final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
       if (toEntityChecker.hasAnnotationOf(type.element!)) {
         final className = type.element!.name!;
         final uiModelName = _getUiModelName(className);

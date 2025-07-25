@@ -8,7 +8,7 @@
 /// ```dart
 /// import 'package:entity_mapper_generator/entity_mapper_generator.dart';
 ///
-/// @GenerateToEntity(UserEntity)
+/// @Entityfy(UserEntity)
 /// class UserModel {
 ///   final String name;
 ///   final String email;
@@ -22,7 +22,7 @@
 /// ## Alternative Usage (for environments with reflection limitations)
 ///
 /// ```dart
-/// @GenerateToEntityByName('UserEntity')
+/// @EntityfyByName('UserEntity')
 /// class UserModel {
 ///   final String name;
 ///   final String email;
@@ -32,4 +32,4 @@
 /// ```
 library;
 
-export 'src/mapper_annotations.dart';
+export 'src/entityfy_annotation.dart';

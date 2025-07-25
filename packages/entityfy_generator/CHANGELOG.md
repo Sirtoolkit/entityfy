@@ -1,3 +1,28 @@
+## 2.0.0
+
+### Added
+- **🎯 Dual Model Generation**: Complete support for generating both Entity classes and UI Model classes from a single annotation
+- **📝 Comprehensive Class Generation**: Auto-generates complete classes with constructors, `fromJson()`, and `toJson()` methods
+- **🔄 Bidirectional Mapping**: Support for both `toEntity()` and `toUiModel()` mapper extensions
+- **⚙️ Flexible Configuration**: New `@Entityfy` annotation with boolean flags for `generateEntity` and `generateUiModel`
+- **🏗️ Combined Generator Architecture**: Unified code generation in a single file with `.entityfy.g.dart` extension
+- **🔍 Smart Naming Convention**: Automatic class naming (`CustomerModel` → `CustomerEntity` + `CustomerUiModel`)
+- **📊 Enhanced Type Conversion**: Intelligent type mapping for nested models, lists, and complex data structures
+- **🛡️ Type Safety**: Full compile-time type checking and validation
+
+### Features
+- Sequential generation of Entity classes, UI Model classes, and their respective mappers
+- Support for DateTime serialization with ISO8601 format
+- Proper nullable type handling throughout the generation process
+- Enhanced List type support with element type casting
+- Deep nested model support with automatic `toEntity()` and `toUiModel()` calls
+- Comprehensive constructor parameter analysis and mapping
+
+### Breaking Changes
+- Replaced multiple individual annotations with unified `@Entityfy` annotation
+- Changed file extension from individual generators to combined `.entityfy.g.dart`
+- Updated API to use boolean flags instead of separate annotation classes
+
 ## 1.2.0
 
 ### Added
