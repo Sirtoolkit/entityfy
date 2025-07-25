@@ -11,7 +11,9 @@ dependencies:
   source_gen: ^2.0.0
   build: ^2.5.4
   analyzer: ^7.4.0
-  entityfy: ^1.0.0
+  # entityfy: ^1.0.0
+  entityfy:
+    path: ../entityfy
 
 dev_dependencies:
   lints: ^6.0.0

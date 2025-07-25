@@ -1,143 +1,71 @@
 import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
 
-/// Annotation that marks a class for automatic entity mapping generation.
+/// Annotation that marks a class for automatic code generation.
 ///
-/// When applied to a class, this annotation will generate a `toEntity()` method
-/// that converts the annotated class to the specified entity type.
+/// This annotation generates different types of code based on boolean parameters:
+/// - Entity class generation and toEntity() mapper (when `generateEntity: true`)
+/// - UI Model class generation and toUiModel() mapper (when `generateUiModel: true`)
 ///
-/// ## Example
+/// The generator automatically creates class names based on the source class:
+/// - For entity: `CustomerModel` → `CustomerEntity`
+/// - For UI model: `CustomerModel` → `CustomerUiModel` or `CustomerEntity` → `CustomerUiModel`
 ///
+/// ## Examples
+///
+/// Generate only entity:
 /// ```dart
-/// @EntityMapper(UserEntity)
-/// class UserModel {
-///   final String name;
-///   final String email;
-///
-///   UserModel({required this.name, required this.email});
-/// }
-/// ```
-///
-/// This will generate:
-/// ```dart
-/// extension UserModelMapper on UserModel {
-///   UserEntity toEntity() {
-///     return UserEntity(
-///       name: name,
-///       email: email,
-///     );
-///   }
-/// }
-/// ```
-@Target({TargetKind.classType})
-@sealed
-class EntityMapper {
-  /// The entity type to which the annotated class will be mapped.
-  ///
-  /// This should be the class that represents the entity version of your model.
-
-  final Object entity;
-
-  /// Creates a [EntityMapper] annotation.
-  ///
-  /// [entity] specifies the target entity class for the mapping.
-  const EntityMapper(this.entity);
-}
-
-/// Annotation that marks a class for automatic UI model mapping generation.
-///
-/// When applied to a class, this annotation will generate a `toUiModel()` method
-/// that converts the annotated class to the specified UI model type.
-///
-/// ## Example
-///
-/// ```dart
-/// @UiModelMapper(UserUiModel)
-/// class UserEntity {
-///   final String name;
-///   final String email;
-///
-///   UserEntity({required this.name, required this.email});
-/// }
-/// ```
-///
-/// This will generate:
-/// ```dart
-/// extension UserEntityMapper on UserEntity {
-///   UserUiModel toUiModel() {
-///     return UserUiModel(
-///       name: name,
-///       email: email,
-///     );
-///   }
-/// }
-/// ```
-@Target({TargetKind.classType})
-@sealed
-class UiModelMapper {
-  /// The UI model type to which the annotated class will be mapped.
-  ///
-  /// This should be the class that represents the UI model version of your entity.
-
-  final Object uiModel;
-
-  /// Creates a [UiModelMapper] annotation.
-  ///
-  /// [uiModel] specifies the target UI model class for the mapping.
-  const UiModelMapper(this.uiModel);
-}
-
-/// Annotation that marks a model class for automatic entity class generation.
-///
-/// When applied to a model class, this annotation will generate a corresponding
-/// entity class with the same properties but without Freezed annotations,
-/// and with fromJson/toJson methods.
-///
-/// ## Example
-///
-/// ```dart
-/// @GenerateEntity()
+/// @GenerateEntity(generateEntity: true)
 /// @freezed
 /// abstract class CustomerModel with _$CustomerModel {
 ///   const factory CustomerModel({
 ///     @Default('') String id,
 ///     @Default('') String name,
 ///   }) = _CustomerModel;
-///
-///   factory CustomerModel.fromJson(Map<String, dynamic> json) =>
-///       _$CustomerModelFromJson(json);
 /// }
 /// ```
+/// Generates: `CustomerEntity` class + `CustomerModel.toEntity()` mapper
 ///
-/// This will generate:
+/// Generate entity and UI model:
 /// ```dart
+/// @GenerateEntity(generateEntity: true, generateUiModel: true)
+/// class CustomerModel {
+///   final String id;
+///   final String name;
+///   // ...
+/// }
+/// ```
+/// Generates: `CustomerEntity` + `CustomerUiModel` + both mappers
+///
+/// Generate only UI model mapper:
+/// ```dart
+/// @GenerateEntity(generateUiModel: true)
 /// class CustomerEntity {
 ///   final String id;
 ///   final String name;
-///
-///   const CustomerEntity({
-///     required this.id,
-///     required this.name,
-///   });
-///
-///   factory CustomerEntity.fromJson(Map<String, dynamic> json) {
-///     return CustomerEntity(
-///       id: json['id'] as String,
-///       name: json['name'] as String,
-///     );
-///   }
-///
-///   Map<String, dynamic> toJson() {
-///     return {
-///       'id': id,
-///       'name': name,
-///     };
-///   }
+///   // ...
 /// }
 /// ```
+/// Generates: `CustomerUiModel` class + `CustomerEntity.toUiModel()` mapper
 @Target({TargetKind.classType})
 @sealed
 class GenerateEntity {
+  /// Whether to generate an entity class and toEntity() mapper.
+  /// Default: false
+  final bool generateEntity;
+
+  /// Whether to generate a UI model class and toUiModel() mapper.
+  /// Default: false
+  final bool generateUiModel;
+
   /// Creates a [GenerateEntity] annotation.
-  const GenerateEntity();
+  ///
+  /// At least one of [generateEntity] or [generateUiModel] must be true.
+  const GenerateEntity({
+    this.generateEntity = false,
+    this.generateUiModel = false,
+  }) : assert(
+         generateEntity || generateUiModel,
+         'At least one of generateEntity or generateUiModel must be true',
+       );
 }
