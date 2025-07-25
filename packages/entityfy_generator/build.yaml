@@ -1,7 +1,21 @@
 builders:
-  entityfy_generator:
-    import: "package:entityfy_generator/src/mapper_generator.dart"
-    builder_factories: ["entityfyGenerator"]
-    build_extensions: {".dart": [".mapper.g.dart"]}
+  generator_entity_mapper:
+    import: "package:entityfy_generator/src/generator_entity_mapper.dart"
+    builder_factories: ["entityGenerator"]
+    build_extensions: {".dart": [".entity.g.dart"]}
+    auto_apply: dependents
+    build_to: source
+
+  generator_ui_model_mapper:
+    import: "package:entityfy_generator/src/generator_ui_model_mapper.dart"
+    builder_factories: ["uiModelGenerator"]
+    build_extensions: {".dart": [".ui_model_mapper.g.dart"]}
+    auto_apply: dependents
+    build_to: source
+
+  generator_entity:
+    import: "package:entityfy_generator/src/generator_entity.dart"
+    builder_factories: ["entityClassGenerator"]
+    build_extensions: {".dart": [".entity_mapper.dart"]}
     auto_apply: dependents
     build_to: source

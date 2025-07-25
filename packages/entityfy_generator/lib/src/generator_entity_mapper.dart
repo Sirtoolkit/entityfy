@@ -15,125 +15,7 @@ import 'package:source_gen/source_gen.dart';
 /// - Proper field mapping between model and entity
 /// - Support for nested model-to-entity conversions
 /// - Type-safe mapping based on constructor parameters
-// class EntityfyGenerator extends Generator {
-//   @override
-//   String? generate(LibraryReader library, BuildStep buildStep) {
-//     final buffer = StringBuffer();
-//     bool hasGeneratedHeader = false;
-
-//     final annotatedClasses = <String>{};
-
-//     for (final element in library.allElements) {
-//       final annotation = TypeChecker.fromRuntime(
-//         EntityMapper,
-//       ).firstAnnotationOf(element);
-//       if (annotation != null) annotatedClasses.add(element.name3 ?? '');
-//     }
-
-//     // Buscar todas las clases anotadas con @EntityMapper
-//     for (final element in library.allElements) {
-//       final annotation = TypeChecker.fromRuntime(
-//         EntityMapper,
-//       ).firstAnnotationOf(element);
-
-//       if (annotation != null) {
-//         final annotationReader = ConstantReader(annotation);
-
-//         // Generar el header solo una vez
-//         if (!hasGeneratedHeader) {
-//           final modelFileName = element.library2?.uri.pathSegments.last;
-//           buffer.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
-//           buffer.writeln('');
-//           buffer.writeln("part of '$modelFileName';");
-//           buffer.writeln('');
-//           hasGeneratedHeader = true;
-//         }
-
-//         final entityType = annotationReader.read('entity').typeValue;
-//         final entityTypeName = entityType.getDisplayString();
-
-//         // Generar la extensión para esta clase
-//         buffer.writeln(
-//           'extension ${element.name3}Mapper on ${element.name3} {',
-//         );
-
-//         buffer.writeln('  $entityTypeName toEntity() {');
-//         buffer.writeln('    return $entityTypeName(');
-
-//         final classElement = element as ClassElement2;
-
-//         final allFields = {
-//           for (var field
-//               in classElement.allSupertypes
-//                   .expand(
-//                     (type) =>
-//                         type.element3.children2.whereType<FieldElement2>(),
-//                   )
-//                   .followedBy(classElement.fields2))
-//             field.name3: field,
-//         };
-
-//         final toEntityChecker = TypeChecker.fromRuntime(EntityMapper);
-
-//         final entityConstructor =
-//             (entityType.element3 as ClassElement2).unnamedConstructor2;
-
-//         if (entityConstructor != null) {
-//           for (final param in entityConstructor.formalParameters) {
-//             final modelField = allFields[param.name3];
-//             if (modelField == null) continue;
-
-//             final modelFieldType = switch (modelField) {
-//               FieldElement2 field => field.type,
-//             };
-
-//             final isNestedModel =
-//                 modelFieldType.element3 != null &&
-//                 toEntityChecker.hasAnnotationOf(modelFieldType.element3!);
-
-//             final isListType = modelFieldType.isDartCoreList;
-
-//             final listElementType =
-//                 modelFieldType is InterfaceType &&
-//                     modelFieldType.typeArguments.isNotEmpty
-//                 ? modelFieldType.typeArguments.first
-//                 : null;
-
-//             final isNestedModelList =
-//                 listElementType?.element3 != null &&
-//                 toEntityChecker.hasAnnotationOf(listElementType!.element3!);
-
-//             if (isListType && isNestedModelList) {
-//               buffer.writeln(
-//                 '      ${param.name3}: ${param.name3}.map((e) => e.toEntity()).toList(),',
-//               );
-//             }
-
-//             if (isNestedModel && !isListType) {
-//               buffer.writeln(
-//                 '      ${param.name3}: ${param.name3}.toEntity(),',
-//               );
-//             }
-
-//             if (!isNestedModel && !isListType ||
-//                 (isListType && !isNestedModelList)) {
-//               buffer.writeln('      ${param.name3}: ${param.name3},');
-//             }
-//           }
-//         }
-
-//         buffer.writeln('    );');
-//         buffer.writeln('  }');
-//         buffer.writeln('}');
-//         buffer.writeln('');
-//       }
-//     }
-
-//     return buffer.isNotEmpty ? buffer.toString() : null;
-//   }
-// }
-
-class EntityfyGenerator extends Generator {
+class EntityGenerator extends Generator {
   @override
   String? generate(LibraryReader library, BuildStep buildStep) {
     final buffer = StringBuffer();
@@ -246,15 +128,15 @@ class EntityfyGenerator extends Generator {
   }
 }
 
-/// Creates a [Builder] that uses [EntityfyGenerator] to generate entity mapping code.
+/// Creates a [Builder] that uses [EntityGenerator] to generate entity mapping code.
 ///
 /// This builder is configured to:
-/// - Use the [EntityfyGenerator] for code generation
+/// - Use the [EntityGenerator] for code generation
 /// - Generate files with the `.mapper.g.dart` extension
 /// - Process libraries that contain classes annotated with [EntityMapper]
-Builder entityfyGenerator(BuilderOptions options) {
+Builder entityGenerator(BuilderOptions options) {
   return LibraryBuilder(
-    EntityfyGenerator(),
-    generatedExtension: '.mapper.g.dart',
+    EntityGenerator(),
+    generatedExtension: '.entity_mapper.g.dart',
   );
 }

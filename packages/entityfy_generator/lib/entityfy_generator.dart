@@ -32,4 +32,6 @@
 /// ```
 library;
 
-export 'src/mapper_generator.dart';
+export 'src/generator_entity_mapper.dart';
+export 'src/generator_ui_model_mapper.dart';
+export 'src/generator_entity.dart';
