@@ -7,7 +7,6 @@ part 'nested_models_example.entityfy.g.dart';
 /// Address model that will be used in other models
 @Entityfy(generateEntity: true, generateUiModel: true)
 class AddressModel {
-
   const AddressModel({
     required this.street,
     required this.city,
@@ -46,7 +45,6 @@ class AddressModel {
 /// This demonstrates how nested models with @Entityfy work together
 @Entityfy(generateEntity: true, generateUiModel: true)
 class UserModel {
-
   const UserModel({
     required this.id,
     required this.firstName,
@@ -91,7 +89,6 @@ class UserModel {
 /// Company model with nested user models
 @Entityfy(generateEntity: true)
 class CompanyModel {
-
   const CompanyModel({
     required this.id,
     required this.name,
@@ -109,7 +106,8 @@ class CompanyModel {
           .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       headquartersAddress: AddressModel.fromJson(
-          json['headquartersAddress'] as Map<String, dynamic>),
+        json['headquartersAddress'] as Map<String, dynamic>,
+      ),
     );
   }
   final String id;

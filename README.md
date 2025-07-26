@@ -19,7 +19,7 @@ dependencies:
   entityfy: ^2.0.0
 
 dev_dependencies:
-  entityfy_generator: ^2.0.0
+  entityfy_generator: ^2.0.1
   build_runner: ^2.4.15
 ```
 

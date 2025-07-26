@@ -1,3 +1,20 @@
+## 2.0.1
+
+### Summary
+This patch release focuses on stability improvements, enhanced type safety, and better code generation quality. Includes performance optimizations and bug fixes that improve the overall developer experience when working with the Entityfy generator.
+
+### Fixed
+- **🐛 Null Safety Enhancement**: Improved nullable type handling in generated mapper methods
+- **🔧 Code Generation Optimization**: Enhanced performance of the build process for large projects
+- **📝 Better Error Messages**: More descriptive error messages during code generation failures
+- **🎯 Type Casting Precision**: Refined automatic type casting for complex nested structures
+
+### Improved
+- **⚡ Build Performance**: Faster code generation with optimized AST analysis
+- **🛡️ Validation Logic**: Enhanced validation of input model structures
+- **📚 Documentation**: Updated inline documentation for generated methods
+- **🧹 Code Quality**: Cleaner generated code with improved formatting and organization
+
 ## 2.0.0
 
 ### Added

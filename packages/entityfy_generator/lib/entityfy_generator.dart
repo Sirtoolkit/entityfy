@@ -18,9 +18,9 @@
 /// ```
 ///
 /// This will generate a `toEntity()` method that converts `UserModel` to `UserEntity`.
-/// 
+///
 /// ## Alternative Usage (for environments with reflection limitations)
-/// 
+///
 /// ```dart
 /// @EntityfyByName('UserEntity')
 /// class UserModel {

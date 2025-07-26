@@ -10,7 +10,6 @@ part 'basic_example.entityfy.g.dart';
 /// - CustomerModel.toEntity() extension method
 @Entityfy(generateEntity: true)
 class CustomerModel {
-
   const CustomerModel({
     required this.id,
     required this.name,
@@ -48,12 +47,11 @@ class CustomerModel {
 /// Example 2: Generate both entity and UI model
 /// This will generate:
 /// - ProductEntity class
-/// - ProductUiModel class  
+/// - ProductUiModel class
 /// - ProductModel.toEntity() extension method
 /// - ProductEntity.toUiModel() extension method
 @Entityfy(generateEntity: true, generateUiModel: true)
 class ProductModel {
-
   const ProductModel({
     required this.id,
     required this.name,
@@ -98,7 +96,6 @@ class ProductModel {
 /// - OrderEntity.toUiModel() extension method
 @Entityfy(generateEntity: false, generateUiModel: true)
 class OrderEntity {
-
   const OrderEntity({
     required this.id,
     required this.customerId,

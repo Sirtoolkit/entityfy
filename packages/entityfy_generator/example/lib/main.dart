@@ -4,16 +4,16 @@ import 'generated_code_demo.dart';
 void main() {
   print('Entityfy Generator Example');
   print('=========================');
-  
+
   // Show the models before generation
   demonstrateModels();
-  
-  print('\n' + '='*50);
-  
+
+  print('\n${'=' * 50}');
+
   // Show what the generator produces
   demonstrateGeneratedCode();
   demonstrateNestedGeneration();
-  
+
   print('\n📝 To see the generator in action:');
   print('1. Run: dart pub get');
   print('2. Run: dart run build_runner build');
@@ -65,14 +65,16 @@ void demonstrateModels() {
   print('  - AuthorModel: "${author.name}"');
   print('  - CommentModel: "${comment.content}"');
   print('  - CategoryEntity: "${category.name}"');
-  
+
   print('\n🔄 After running build_runner, you can use:');
   print('  - blogPost.toEntity() → BlogPostEntity');
   print('  - blogPost.toEntity().toUiModel() → BlogPostUiModel');
   print('  - author.toEntity() → AuthorEntity');
-  print('  - comment.toEntity() → CommentEntity (with nested author conversion)');
+  print(
+    '  - comment.toEntity() → CommentEntity (with nested author conversion)',
+  );
   print('  - category.toUiModel() → CategoryUiModel');
-  
+
   print('\n✨ The generator will create:');
   print('  • Entity classes with fromJson/toJson methods');
   print('  • UI Model classes optimized for UI display');

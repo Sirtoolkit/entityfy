@@ -23,18 +23,22 @@ class CombinedEntityfyGenerator extends Generator {
     bool hasGeneratedHeader = false;
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(
+        Entityfy,
+      ).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
-        
-        final generateEntity = annotationReader.read('generateEntity').boolValue;
+
+        final generateEntity = annotationReader
+            .read('generateEntity')
+            .boolValue;
         if (generateEntity) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
             hasGeneratedHeader = true;
           }
-          
+
           hasGeneratedContent = true;
           _generateEntityClass(buffer, element);
         }
@@ -42,18 +46,22 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(
+        Entityfy,
+      ).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
-        
-        final generateUiModel = annotationReader.read('generateUiModel').boolValue;
+
+        final generateUiModel = annotationReader
+            .read('generateUiModel')
+            .boolValue;
         if (generateUiModel) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
             hasGeneratedHeader = true;
           }
-          
+
           hasGeneratedContent = true;
           _generateUiModelClass(buffer, element);
         }
@@ -61,18 +69,22 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(
+        Entityfy,
+      ).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
-        
-        final generateEntity = annotationReader.read('generateEntity').boolValue;
+
+        final generateEntity = annotationReader
+            .read('generateEntity')
+            .boolValue;
         if (generateEntity) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
             hasGeneratedHeader = true;
           }
-          
+
           hasGeneratedContent = true;
           _generateEntityMapper(buffer, element, library);
         }
@@ -80,18 +92,22 @@ class CombinedEntityfyGenerator extends Generator {
     }
 
     for (final element in library.allElements) {
-      final annotation = TypeChecker.fromRuntime(Entityfy).firstAnnotationOf(element);
+      final annotation = TypeChecker.fromRuntime(
+        Entityfy,
+      ).firstAnnotationOf(element);
 
       if (annotation != null && element is ClassElement) {
         final annotationReader = ConstantReader(annotation);
-        
-        final generateUiModel = annotationReader.read('generateUiModel').boolValue;
+
+        final generateUiModel = annotationReader
+            .read('generateUiModel')
+            .boolValue;
         if (generateUiModel) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
             hasGeneratedHeader = true;
           }
-          
+
           hasGeneratedContent = true;
           _generateUiModelMapper(buffer, element, library);
         }
@@ -112,13 +128,15 @@ class CombinedEntityfyGenerator extends Generator {
   void _generateEntityClass(StringBuffer buffer, ClassElement element) {
     final className = element.name;
     final entityName = _getEntityName(className);
-    
+
     buffer.writeln('// Generated Entity Class');
     buffer.writeln('class $entityName {');
 
-    final constructor = element.constructors
-        .where((c) => c.isFactory || (c.isConst && !c.isFactory))
-        .firstOrNull ?? element.unnamedConstructor;
+    final constructor =
+        element.constructors
+            .where((c) => c.isFactory || (c.isConst && !c.isFactory))
+            .firstOrNull ??
+        element.unnamedConstructor;
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
@@ -141,34 +159,51 @@ class CombinedEntityfyGenerator extends Generator {
 
       buffer.writeln('');
 
-      buffer.writeln('  factory $entityName.fromJson(Map<String, dynamic> json) {');
+      buffer.writeln(
+        '  factory $entityName.fromJson(Map<String, dynamic> json) {',
+      );
       buffer.writeln('    return $entityName(');
       for (final param in constructor.parameters) {
         final type = param.type;
         final paramName = param.name;
-        
+
         if (type.isDartCoreString) {
-          buffer.writeln("      $paramName: json['$paramName'] as String? ?? '',");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as String? ?? '',",
+          );
         } else if (type.isDartCoreInt) {
           buffer.writeln("      $paramName: json['$paramName'] as int? ?? 0,");
         } else if (type.isDartCoreDouble) {
-          buffer.writeln("      $paramName: json['$paramName'] as double? ?? 0.0,");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as double? ?? 0.0,",
+          );
         } else if (type.isDartCoreBool) {
-          buffer.writeln("      $paramName: json['$paramName'] as bool? ?? false,");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as bool? ?? false,",
+          );
         } else if (type.isDartCoreList) {
           // Handle List types with proper element type casting
-          final listElementType = type is InterfaceType && type.typeArguments.isNotEmpty
+          final listElementType =
+              type is InterfaceType && type.typeArguments.isNotEmpty
               ? type.typeArguments.first
               : null;
-          
+
           if (listElementType != null) {
-            final elementTypeName = listElementType.getDisplayString(withNullability: false);
-            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],");
+            final elementTypeName = listElementType.getDisplayString(
+              withNullability: false,
+            );
+            buffer.writeln(
+              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],",
+            );
           } else {
-            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+            buffer.writeln(
+              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],",
+            );
           }
         } else if (type.toString().contains('DateTime')) {
-          buffer.writeln("      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),",
+          );
         } else {
           buffer.writeln("      $paramName: json['$paramName'],");
         }
@@ -183,7 +218,7 @@ class CombinedEntityfyGenerator extends Generator {
       for (final param in constructor.parameters) {
         final paramName = param.name;
         final type = param.type;
-        
+
         if (type.toString().contains('DateTime')) {
           buffer.writeln("      '$paramName': $paramName.toIso8601String(),");
         } else {
@@ -201,13 +236,15 @@ class CombinedEntityfyGenerator extends Generator {
   void _generateUiModelClass(StringBuffer buffer, ClassElement element) {
     final className = element.name;
     final uiModelName = _getUiModelName(className);
-    
+
     buffer.writeln('// Generated UI Model Class');
     buffer.writeln('class $uiModelName {');
 
-    final constructor = element.constructors
-        .where((c) => c.isFactory || (c.isConst && !c.isFactory))
-        .firstOrNull ?? element.unnamedConstructor;
+    final constructor =
+        element.constructors
+            .where((c) => c.isFactory || (c.isConst && !c.isFactory))
+            .firstOrNull ??
+        element.unnamedConstructor;
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
@@ -230,34 +267,51 @@ class CombinedEntityfyGenerator extends Generator {
 
       buffer.writeln('');
 
-      buffer.writeln('  factory $uiModelName.fromJson(Map<String, dynamic> json) {');
+      buffer.writeln(
+        '  factory $uiModelName.fromJson(Map<String, dynamic> json) {',
+      );
       buffer.writeln('    return $uiModelName(');
       for (final param in constructor.parameters) {
         final type = param.type;
         final paramName = param.name;
-        
+
         if (type.isDartCoreString) {
-          buffer.writeln("      $paramName: json['$paramName'] as String? ?? '',");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as String? ?? '',",
+          );
         } else if (type.isDartCoreInt) {
           buffer.writeln("      $paramName: json['$paramName'] as int? ?? 0,");
         } else if (type.isDartCoreDouble) {
-          buffer.writeln("      $paramName: json['$paramName'] as double? ?? 0.0,");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as double? ?? 0.0,",
+          );
         } else if (type.isDartCoreBool) {
-          buffer.writeln("      $paramName: json['$paramName'] as bool? ?? false,");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] as bool? ?? false,",
+          );
         } else if (type.isDartCoreList) {
           // Handle List types with proper element type casting
-          final listElementType = type is InterfaceType && type.typeArguments.isNotEmpty
+          final listElementType =
+              type is InterfaceType && type.typeArguments.isNotEmpty
               ? type.typeArguments.first
               : null;
-          
+
           if (listElementType != null) {
-            final elementTypeName = listElementType.getDisplayString(withNullability: false);
-            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],");
+            final elementTypeName = listElementType.getDisplayString(
+              withNullability: false,
+            );
+            buffer.writeln(
+              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],",
+            );
           } else {
-            buffer.writeln("      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],");
+            buffer.writeln(
+              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],",
+            );
           }
         } else if (type.toString().contains('DateTime')) {
-          buffer.writeln("      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),");
+          buffer.writeln(
+            "      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),",
+          );
         } else {
           buffer.writeln("      $paramName: json['$paramName'],");
         }
@@ -272,7 +326,7 @@ class CombinedEntityfyGenerator extends Generator {
       for (final param in constructor.parameters) {
         final paramName = param.name;
         final type = param.type;
-        
+
         if (type.toString().contains('DateTime')) {
           buffer.writeln("      '$paramName': $paramName.toIso8601String(),");
         } else {
@@ -287,26 +341,35 @@ class CombinedEntityfyGenerator extends Generator {
     buffer.writeln('');
   }
 
-  void _generateEntityMapper(StringBuffer buffer, ClassElement element, LibraryReader library) {
+  void _generateEntityMapper(
+    StringBuffer buffer,
+    ClassElement element,
+    LibraryReader library,
+  ) {
     final entityName = _getEntityName(element.name);
 
     buffer.writeln('// Generated Entity Mapper Extension');
-    buffer.writeln('extension ${element.name}EntityMapper on ${element.name} {');
+    buffer.writeln(
+      'extension ${element.name}EntityMapper on ${element.name} {',
+    );
     buffer.writeln('  $entityName toEntity() {');
     buffer.writeln('    return $entityName(');
 
     final allFields = {
-      for (var field in element.allSupertypes
-          .expand((type) => type.element.children.whereType<FieldElement>())
-          .followedBy(element.fields))
+      for (var field
+          in element.allSupertypes
+              .expand((type) => type.element.children.whereType<FieldElement>())
+              .followedBy(element.fields))
         field.name: field,
     };
 
     final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
 
-    final constructor = element.constructors
-        .where((c) => c.isFactory || (c.isConst && !c.isFactory))
-        .firstOrNull ?? element.unnamedConstructor;
+    final constructor =
+        element.constructors
+            .where((c) => c.isFactory || (c.isConst && !c.isFactory))
+            .firstOrNull ??
+        element.unnamedConstructor;
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
@@ -314,20 +377,25 @@ class CombinedEntityfyGenerator extends Generator {
         if (modelField == null) continue;
 
         final modelFieldType = modelField.type;
-        final isNestedModel = modelFieldType.element != null &&
+        final isNestedModel =
+            modelFieldType.element != null &&
             toEntityChecker.hasAnnotationOf(modelFieldType.element!);
         final isListType = modelFieldType.isDartCoreList;
 
-        final listElementType = modelFieldType is InterfaceType &&
+        final listElementType =
+            modelFieldType is InterfaceType &&
                 modelFieldType.typeArguments.isNotEmpty
             ? modelFieldType.typeArguments.first
             : null;
 
-        final isNestedModelList = listElementType?.element != null &&
+        final isNestedModelList =
+            listElementType?.element != null &&
             toEntityChecker.hasAnnotationOf(listElementType!.element!);
 
         if (isListType && isNestedModelList) {
-          buffer.writeln('      ${param.name}: ${param.name}.map((e) => e.toEntity()).toList(),');
+          buffer.writeln(
+            '      ${param.name}: ${param.name}.map((e) => e.toEntity()).toList(),',
+          );
         } else if (isNestedModel && !isListType) {
           buffer.writeln('      ${param.name}: ${param.name}.toEntity(),');
         } else {
@@ -342,7 +410,11 @@ class CombinedEntityfyGenerator extends Generator {
     buffer.writeln('');
   }
 
-  void _generateUiModelMapper(StringBuffer buffer, ClassElement element, LibraryReader library) {
+  void _generateUiModelMapper(
+    StringBuffer buffer,
+    ClassElement element,
+    LibraryReader library,
+  ) {
     final uiModelName = _getUiModelName(element.name);
     final entityName = _getEntityName(element.name);
 
@@ -352,17 +424,20 @@ class CombinedEntityfyGenerator extends Generator {
     buffer.writeln('    return $uiModelName(');
 
     final allFields = {
-      for (var field in element.allSupertypes
-          .expand((type) => type.element.children.whereType<FieldElement>())
-          .followedBy(element.fields))
+      for (var field
+          in element.allSupertypes
+              .expand((type) => type.element.children.whereType<FieldElement>())
+              .followedBy(element.fields))
         field.name: field,
     };
 
     final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
 
-    final constructor = element.constructors
-        .where((c) => c.isFactory || (c.isConst && !c.isFactory))
-        .firstOrNull ?? element.unnamedConstructor;
+    final constructor =
+        element.constructors
+            .where((c) => c.isFactory || (c.isConst && !c.isFactory))
+            .firstOrNull ??
+        element.unnamedConstructor;
 
     if (constructor != null) {
       for (final param in constructor.parameters) {
@@ -370,20 +445,25 @@ class CombinedEntityfyGenerator extends Generator {
         if (sourceField == null) continue;
 
         final sourceFieldType = sourceField.type;
-        final isNestedModel = sourceFieldType.element != null &&
+        final isNestedModel =
+            sourceFieldType.element != null &&
             toEntityChecker.hasAnnotationOf(sourceFieldType.element!);
         final isListType = sourceFieldType.isDartCoreList;
 
-        final listElementType = sourceFieldType is InterfaceType &&
+        final listElementType =
+            sourceFieldType is InterfaceType &&
                 sourceFieldType.typeArguments.isNotEmpty
             ? sourceFieldType.typeArguments.first
             : null;
 
-        final isNestedModelList = listElementType?.element != null &&
+        final isNestedModelList =
+            listElementType?.element != null &&
             toEntityChecker.hasAnnotationOf(listElementType!.element!);
 
         if (isListType && isNestedModelList) {
-          buffer.writeln('      ${param.name}: ${param.name}.map((e) => e.toUiModel()).toList(),');
+          buffer.writeln(
+            '      ${param.name}: ${param.name}.map((e) => e.toUiModel()).toList(),',
+          );
         } else if (isNestedModel && !isListType) {
           buffer.writeln('      ${param.name}: ${param.name}.toUiModel(),');
         } else {
@@ -417,26 +497,34 @@ class CombinedEntityfyGenerator extends Generator {
   /// Converts types to their entity equivalents when applicable
   String _convertTypeToEntityType(DartType type) {
     final typeString = type.getDisplayString(withNullability: true);
-    
+
     // Handle List types
-    if (type.isDartCoreList && type is InterfaceType && type.typeArguments.isNotEmpty) {
+    if (type.isDartCoreList &&
+        type is InterfaceType &&
+        type.typeArguments.isNotEmpty) {
       final elementType = type.typeArguments.first;
       final convertedElementType = _convertTypeToEntityType(elementType);
-      final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+      final nullability =
+          type.nullabilitySuffix.toString() == 'NullabilitySuffix.question'
+          ? '?'
+          : '';
       return 'List<$convertedElementType>$nullability';
     }
-    
+
     // Handle custom classes that might have @Entityfy annotation
     if (type.element != null) {
       final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
       if (toEntityChecker.hasAnnotationOf(type.element!)) {
         final className = type.element!.name!;
         final entityName = _getEntityName(className);
-        final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+        final nullability =
+            type.nullabilitySuffix.toString() == 'NullabilitySuffix.question'
+            ? '?'
+            : '';
         return '$entityName$nullability';
       }
     }
-    
+
     // Return original type for primitive types and non-annotated classes
     return typeString;
   }
@@ -444,26 +532,34 @@ class CombinedEntityfyGenerator extends Generator {
   /// Converts types to their UI model equivalents when applicable
   String _convertTypeToUiModelType(DartType type) {
     final typeString = type.getDisplayString(withNullability: true);
-    
+
     // Handle List types
-    if (type.isDartCoreList && type is InterfaceType && type.typeArguments.isNotEmpty) {
+    if (type.isDartCoreList &&
+        type is InterfaceType &&
+        type.typeArguments.isNotEmpty) {
       final elementType = type.typeArguments.first;
       final convertedElementType = _convertTypeToUiModelType(elementType);
-      final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+      final nullability =
+          type.nullabilitySuffix.toString() == 'NullabilitySuffix.question'
+          ? '?'
+          : '';
       return 'List<$convertedElementType>$nullability';
     }
-    
+
     // Handle custom classes that might have @Entityfy annotation
     if (type.element != null) {
       final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
       if (toEntityChecker.hasAnnotationOf(type.element!)) {
         final className = type.element!.name!;
         final uiModelName = _getUiModelName(className);
-        final nullability = type.nullabilitySuffix.toString() == 'NullabilitySuffix.question' ? '?' : '';
+        final nullability =
+            type.nullabilitySuffix.toString() == 'NullabilitySuffix.question'
+            ? '?'
+            : '';
         return '$uiModelName$nullability';
       }
     }
-    
+
     // Return original type for primitive types and non-annotated classes
     return typeString;
   }

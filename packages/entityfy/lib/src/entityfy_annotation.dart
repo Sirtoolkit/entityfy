@@ -51,7 +51,7 @@ import 'package:meta/meta_meta.dart';
 @sealed
 class Entityfy {
   /// Whether to generate an entity class and toEntity() mapper.
-  /// Default: true 
+  /// Default: true
   final bool generateEntity;
 
   /// Whether to generate a UI model class and toUiModel() mapper.
@@ -61,11 +61,9 @@ class Entityfy {
   /// Creates an [Entityfy] annotation.
   ///
   /// At least one of [generateEntity] or [generateUiModel] must be true.
-  const Entityfy({
-    this.generateEntity = true,
-    this.generateUiModel = false,
-  }) : assert(
-         generateEntity || generateUiModel,
-         'At least one of generateEntity or generateUiModel must be true',
-       );
+  const Entityfy({this.generateEntity = true, this.generateUiModel = false})
+    : assert(
+        generateEntity || generateUiModel,
+        'At least one of generateEntity or generateUiModel must be true',
+      );
 }

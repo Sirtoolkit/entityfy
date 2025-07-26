@@ -1,15 +1,17 @@
 # Entityfy Generator
 
-Code generator for the [`entityfy`](../entityfy) package. Automatically generates complete Entity classes, UI Model classes, and their mapping methods using the `@Entityfy` annotation.
+**Build-time code generator** for the [`entityfy`](../entityfy) package. This dev dependency automatically generates complete Entity classes, UI Model classes, and their mapping methods using the `@Entityfy` annotation during build time.
+
+> **Note:** This is a development tool that runs during build time using `build_runner`. It does not add any runtime dependencies to your application.
 
 ## Installation
 
 ```yaml
 dependencies:
-  entityfy: ^2.0.0
+  entityfy: ^2.0.1
 
 dev_dependencies:
-  entityfy_generator: ^2.0.0
+  entityfy_generator: ^2.0.1
   build_runner: ^2.4.9
 ```
 
