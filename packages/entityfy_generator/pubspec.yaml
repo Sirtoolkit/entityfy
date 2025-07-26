@@ -12,8 +12,6 @@ topics:
   - data-transformation
   - annotations
   - source-gen
-  - build-time
-  - dev-tools
 
 environment:
   sdk: ^3.8.0
