@@ -1,5 +1,8 @@
-name: entityfy
-version: 2.0.0
+name: entityfy_workspace
+description: A monorepo workspace for the Entityfy package ecosystem
+version: 2.0.1
+homepage: https://github.com/Sirtoolkit/entityfy
+repository: https://github.com/Sirtoolkit/entityfy
 
 environment:
   sdk: ^3.8.0

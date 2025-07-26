@@ -1,8 +1,16 @@
 name: entityfy
 description: A powerful Dart code generator that automatically creates toEntity() methods for seamless conversion between domain models and data layer entities using simple annotations.
-version: 2.0.0
-homepage: https://github.com/Sirtoolkit/entityfy.git
-repository: https://github.com/Sirtoolkit/entityfy.git 
+version: 2.0.1
+homepage: https://github.com/Sirtoolkit/entityfy
+repository: https://github.com/Sirtoolkit/entityfy
+issue_tracker: https://github.com/Sirtoolkit/entityfy/issues
+documentation: https://github.com/Sirtoolkit/entityfy/blob/main/packages/entityfy/README.md
+
+topics:
+  - annotations
+  - code-generation
+  - entity-mapping
+  - data-transformation 
 
 environment:
   sdk: ^3.8.0

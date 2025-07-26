@@ -26,7 +26,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  entityfy: ^2.0.0
+  entityfy: ^2.0.1
 
 dev_dependencies:
   entityfy_generator: ^2.0.1 
