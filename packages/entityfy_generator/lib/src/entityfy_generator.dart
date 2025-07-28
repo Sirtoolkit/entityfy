@@ -22,6 +22,7 @@ class CombinedEntityfyGenerator extends Generator {
     bool hasGeneratedContent = false;
     bool hasGeneratedHeader = false;
 
+    // Generate Entity classes
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
         Entityfy,
@@ -33,6 +34,11 @@ class CombinedEntityfyGenerator extends Generator {
         final generateEntity = annotationReader
             .read('generateEntity')
             .boolValue;
+
+        final generateFakeList = annotationReader
+            .read('generateFakeList')
+            .boolValue;
+
         if (generateEntity) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
@@ -40,11 +46,16 @@ class CombinedEntityfyGenerator extends Generator {
           }
 
           hasGeneratedContent = true;
-          _generateEntityClass(buffer, element);
+          _generateEntityClass(
+            buffer,
+            element,
+            includeFakeData: generateFakeList,
+          );
         }
       }
     }
 
+    // Generate UI Model classes
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
         Entityfy,
@@ -56,6 +67,7 @@ class CombinedEntityfyGenerator extends Generator {
         final generateUiModel = annotationReader
             .read('generateUiModel')
             .boolValue;
+
         if (generateUiModel) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
@@ -68,6 +80,7 @@ class CombinedEntityfyGenerator extends Generator {
       }
     }
 
+    // Generate Entity Mappers
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
         Entityfy,
@@ -79,6 +92,7 @@ class CombinedEntityfyGenerator extends Generator {
         final generateEntity = annotationReader
             .read('generateEntity')
             .boolValue;
+
         if (generateEntity) {
           if (!hasGeneratedHeader) {
             _generateHeader(buffer, element);
@@ -91,6 +105,7 @@ class CombinedEntityfyGenerator extends Generator {
       }
     }
 
+    // Generate UI Model Mappers
     for (final element in library.allElements) {
       final annotation = TypeChecker.fromRuntime(
         Entityfy,
@@ -123,9 +138,14 @@ class CombinedEntityfyGenerator extends Generator {
     buffer.writeln('');
     buffer.writeln("part of '$sourceFileName';");
     buffer.writeln('');
+    buffer.writeln('');
   }
 
-  void _generateEntityClass(StringBuffer buffer, ClassElement element) {
+  void _generateEntityClass(
+    StringBuffer buffer,
+    ClassElement element, {
+    bool includeFakeData = false,
+  }) {
     final className = element.name;
     final entityName = _getEntityName(className);
 
@@ -149,67 +169,12 @@ class CombinedEntityfyGenerator extends Generator {
 
       buffer.writeln('  const $entityName({');
       for (final param in constructor.parameters) {
-        if (param.isRequired || !param.hasDefaultValue) {
-          buffer.writeln('    required this.${param.name},');
-        } else {
-          buffer.writeln('    this.${param.name},');
-        }
-      }
-      buffer.writeln('  });');
-
-      buffer.writeln('');
-
-      buffer.writeln(
-        '  factory $entityName.fromJson(Map<String, dynamic> json) {',
-      );
-      buffer.writeln('    return $entityName(');
-      for (final param in constructor.parameters) {
         final type = param.type;
-        final paramName = param.name;
-
-        if (type.isDartCoreString) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as String? ?? '',",
-          );
-        } else if (type.isDartCoreInt) {
-          buffer.writeln("      $paramName: json['$paramName'] as int? ?? 0,");
-        } else if (type.isDartCoreDouble) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as double? ?? 0.0,",
-          );
-        } else if (type.isDartCoreBool) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as bool? ?? false,",
-          );
-        } else if (type.isDartCoreList) {
-          // Handle List types with proper element type casting
-          final listElementType =
-              type is InterfaceType && type.typeArguments.isNotEmpty
-              ? type.typeArguments.first
-              : null;
-
-          if (listElementType != null) {
-            final elementTypeName = listElementType.getDisplayString(
-              withNullability: false,
-            );
-            buffer.writeln(
-              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],",
-            );
-          } else {
-            buffer.writeln(
-              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],",
-            );
-          }
-        } else if (type.toString().contains('DateTime')) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),",
-          );
-        } else {
-          buffer.writeln("      $paramName: json['$paramName'],");
-        }
+        final defaultValue = _getDefaultValueForType(type, isEntity: true);
+        buffer.writeln('    this.${param.name} = $defaultValue,');
       }
-      buffer.writeln('    );');
-      buffer.writeln('  }');
+
+      buffer.writeln('  });');
 
       buffer.writeln('');
 
@@ -227,6 +192,13 @@ class CombinedEntityfyGenerator extends Generator {
       }
       buffer.writeln('    };');
       buffer.writeln('  }');
+
+      // Generate copyWith method
+      _generateCopyWithMethod(buffer, constructor, entityName, isEntity: true);
+    }
+
+    if (includeFakeData) {
+      _generateFakeDataStaticMethods(buffer, element, entityName);
     }
 
     buffer.writeln('}');
@@ -257,67 +229,11 @@ class CombinedEntityfyGenerator extends Generator {
 
       buffer.writeln('  const $uiModelName({');
       for (final param in constructor.parameters) {
-        if (param.isRequired || !param.hasDefaultValue) {
-          buffer.writeln('    required this.${param.name},');
-        } else {
-          buffer.writeln('    this.${param.name},');
-        }
+        final type = param.type;
+        final defaultValue = _getDefaultValueForType(type, isUiModel: true);
+        buffer.writeln('    this.${param.name} = $defaultValue,');
       }
       buffer.writeln('  });');
-
-      buffer.writeln('');
-
-      buffer.writeln(
-        '  factory $uiModelName.fromJson(Map<String, dynamic> json) {',
-      );
-      buffer.writeln('    return $uiModelName(');
-      for (final param in constructor.parameters) {
-        final type = param.type;
-        final paramName = param.name;
-
-        if (type.isDartCoreString) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as String? ?? '',",
-          );
-        } else if (type.isDartCoreInt) {
-          buffer.writeln("      $paramName: json['$paramName'] as int? ?? 0,");
-        } else if (type.isDartCoreDouble) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as double? ?? 0.0,",
-          );
-        } else if (type.isDartCoreBool) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] as bool? ?? false,",
-          );
-        } else if (type.isDartCoreList) {
-          // Handle List types with proper element type casting
-          final listElementType =
-              type is InterfaceType && type.typeArguments.isNotEmpty
-              ? type.typeArguments.first
-              : null;
-
-          if (listElementType != null) {
-            final elementTypeName = listElementType.getDisplayString(
-              withNullability: false,
-            );
-            buffer.writeln(
-              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<$elementTypeName>() ?? [],",
-            );
-          } else {
-            buffer.writeln(
-              "      $paramName: (json['$paramName'] as List<dynamic>?)?.cast<dynamic>() ?? [],",
-            );
-          }
-        } else if (type.toString().contains('DateTime')) {
-          buffer.writeln(
-            "      $paramName: json['$paramName'] != null ? DateTime.parse(json['$paramName'] as String) : DateTime.now(),",
-          );
-        } else {
-          buffer.writeln("      $paramName: json['$paramName'],");
-        }
-      }
-      buffer.writeln('    );');
-      buffer.writeln('  }');
 
       buffer.writeln('');
 
@@ -335,10 +251,91 @@ class CombinedEntityfyGenerator extends Generator {
       }
       buffer.writeln('    };');
       buffer.writeln('  }');
+
+      // Generate copyWith method
+      _generateCopyWithMethod(buffer, constructor, uiModelName, isUiModel: true);
     }
 
     buffer.writeln('}');
     buffer.writeln('');
+  }
+
+  void _generateFakeDataStaticMethods(
+    StringBuffer buffer,
+    ClassElement element,
+    String entityName,
+  ) {
+    buffer.writeln('');
+    buffer.writeln('  // Generated Fake Data Methods');
+    buffer.writeln('  static List<$entityName> fakeList({int count = 20}) {');
+    buffer.writeln('    return List.generate(count, (index) {');
+    buffer.writeln('      return $entityName(');
+
+    final constructor =
+        element.constructors
+            .where((c) => c.isFactory || (c.isConst && !c.isFactory))
+            .firstOrNull ??
+        element.unnamedConstructor;
+
+    if (constructor != null) {
+      for (final param in constructor.parameters) {
+        final type = param.type;
+        final paramName = param.name;
+
+        if (type.isDartCoreString) {
+          buffer.writeln('        $paramName: \'$paramName \$index\',');
+        } else if (type.isDartCoreInt) {
+          buffer.writeln('        $paramName: index,');
+        } else if (type.isDartCoreDouble) {
+          buffer.writeln('        $paramName: index.toDouble(),');
+        } else if (type.isDartCoreBool) {
+          buffer.writeln('        $paramName: index % 2 == 0,');
+        } else if (type.isDartCoreList) {
+          final listElementType =
+              type is InterfaceType && type.typeArguments.isNotEmpty
+              ? type.typeArguments.first
+              : null;
+
+          if (listElementType != null && listElementType.isDartCoreString) {
+            buffer.writeln(
+              '        $paramName: [\'$paramName \$index\', \'$paramName \${index + 1}\'],',
+            );
+          } else if (listElementType != null && listElementType.isDartCoreInt) {
+            buffer.writeln('        $paramName: [index, index + 1],');
+          } else {
+            buffer.writeln('        $paramName: [],');
+          }
+        } else if (type.toString().contains('DateTime')) {
+          buffer.writeln(
+            '        $paramName: DateTime.now().subtract(Duration(days: index)),',
+          );
+        } else {
+          // For custom types or nullable types, provide reasonable defaults
+          if (param.isRequired && !param.hasDefaultValue) {
+            if (type.nullabilitySuffix.toString() ==
+                'NullabilitySuffix.question') {
+              buffer.writeln('        $paramName: null,');
+            } else {
+              // Try to provide a reasonable default for custom types
+              final typeName = type.getDisplayString(withNullability: false);
+              if (typeName.contains('Model') || typeName.contains('Entity')) {
+                buffer.writeln(
+                  '        // $paramName: provide instance of $typeName,',
+                );
+              } else {
+                buffer.writeln(
+                  '        // $paramName: provide appropriate value for $typeName,',
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    buffer.writeln('      );');
+    buffer.writeln('    });');
+    buffer.writeln('  }');
   }
 
   void _generateEntityMapper(
@@ -478,6 +475,50 @@ class CombinedEntityfyGenerator extends Generator {
     buffer.writeln('');
   }
 
+  void _generateCopyWithMethod(
+    StringBuffer buffer,
+    ConstructorElement constructor,
+    String className, {
+    bool isEntity = false,
+    bool isUiModel = false,
+  }) {
+    buffer.writeln('');
+    buffer.writeln('  $className copyWith({');
+    
+    // Generate optional parameters for copyWith
+    for (final param in constructor.parameters) {
+      final type = param.type;
+      String typeName;
+      
+      if (isEntity) {
+        typeName = _convertTypeToEntityType(type);
+      } else if (isUiModel) {
+        typeName = _convertTypeToUiModelType(type);
+      } else {
+        typeName = type.getDisplayString(withNullability: true);
+      }
+      
+      // Make all parameters nullable for copyWith
+      if (!typeName.endsWith('?')) {
+        typeName = '$typeName?';
+      }
+      
+      buffer.writeln('    $typeName ${param.name},');
+    }
+    
+    buffer.writeln('  }) {');
+    buffer.writeln('    return $className(');
+    
+    // Generate constructor calls with null coalescing
+    for (final param in constructor.parameters) {
+      final paramName = param.name;
+      buffer.writeln('      $paramName: $paramName ?? this.$paramName,');
+    }
+    
+    buffer.writeln('    );');
+    buffer.writeln('  }');
+  }
+
   String _getEntityName(String className) {
     if (className.endsWith('Model')) {
       return '${className.substring(0, className.length - 5)}Entity';
@@ -562,6 +603,56 @@ class CombinedEntityfyGenerator extends Generator {
 
     // Return original type for primitive types and non-annotated classes
     return typeString;
+  }
+
+  String _getDefaultValueForType(
+    DartType type, {
+    bool isEntity = false,
+    bool isUiModel = false,
+  }) {
+    if (type.isDartCoreString) {
+      return "''";
+    } else if (type.isDartCoreInt) {
+      return '0';
+    } else if (type.isDartCoreDouble) {
+      return '0.0';
+    } else if (type.isDartCoreBool) {
+      return 'false';
+    } else if (type.isDartCoreList) {
+      return 'const []';
+    } else if (type.toString().contains('DateTime')) {
+      return 'DateTime.now()';
+    } else if (type.isDartCoreNum) {
+      return '0';
+    } else if (type.nullabilitySuffix.toString() ==
+        'NullabilitySuffix.question') {
+      return 'null';
+    } else if (type.toString().startsWith('Color')) {
+      return 'const Color(0xFF000000)'; // Default to black
+    } else {
+      // For custom types, use the original class name (Model class)
+      final typeName = type.getDisplayString(withNullability: false);
+
+      // Check if it's a class with @Entityfy annotation and convert appropriately
+      if (type.element != null) {
+        final toEntityChecker = TypeChecker.fromRuntime(Entityfy);
+        if (toEntityChecker.hasAnnotationOf(type.element!)) {
+          final originalClassName = type.element!.name!;
+
+          if (isEntity) {
+            final entityName = _getEntityName(originalClassName);
+            return 'const $entityName()';
+          } else if (isUiModel) {
+            final uiModelName = _getUiModelName(originalClassName);
+            return 'const $uiModelName()';
+          } else {
+            return 'const $typeName()';
+          }
+        }
+      }
+
+      return 'const $typeName()';
+    }
   }
 }
 

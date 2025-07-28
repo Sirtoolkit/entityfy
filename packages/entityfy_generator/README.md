@@ -8,10 +8,10 @@
 
 ```yaml
 dependencies:
-  entityfy: ^2.0.1
+  entityfy: ^2.1.0
 
 dev_dependencies:
-  entityfy_generator: ^2.0.1
+  entityfy_generator: ^2.1.0
   build_runner: ^2.4.9
 ```
 
@@ -26,6 +26,9 @@ dev_dependencies:
 - **🏗️ Combined Output**: All code generated in a single `.entityfy.g.dart` file
 - **📊 DateTime Support**: Automatic ISO8601 DateTime serialization
 - **🔗 Nested Model Support**: Recursive conversion of annotated nested models
+- **🧪 Fake Data Generation**: Static `fakeList()` methods for creating realistic test data *(v2.1.0+)*
+- **📋 CopyWith Methods**: Immutable update methods with nullable parameters *(v2.1.0+)*
+- **🎯 Testing Support**: Configurable mock data generation for development and testing *(v2.1.0+)*
 
 ## Running the Generator
 ```bash
@@ -38,4 +41,3 @@ dart run build_runner watch
 # Clean previous builds
 dart run build_runner clean
 ```
-

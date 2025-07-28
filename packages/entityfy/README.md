@@ -11,7 +11,9 @@ A powerful code generator for Dart that automatically creates Entity and UI Mode
 - 🛠️ **Build Runner Integration**: Seamless integration with Dart's build system
 - 🎯 **Zero Runtime Dependencies**: Generated code has no external dependencies
 - 🔗 **Nested Model Support**: Automatically handles complex nested structures with recursive conversion
-- ⚙️ **Flexible Configuration**: Choose what to generate with boolean flags (`generateEntity`, `generateUiModel`)
+- ⚙️ **Flexible Configuration**: Choose what to generate with boolean flags (`generateEntity`, `generateUiModel`, `generateFakeList`)
+- 🧪 **Fake Data Generation**: Static `fakeList()` methods for creating realistic test data *(v2.1.0+)*
+- 📋 **CopyWith Methods**: Immutable update methods for all generated classes *(v2.1.0+)*
 
 ## Getting Started
 
@@ -26,10 +28,10 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  entityfy: ^2.0.1
+  entityfy: ^2.1.0
 
 dev_dependencies:
-  entityfy_generator: ^2.0.1 
+  entityfy_generator: ^2.1.0 
   build_runner: ^2.4.15
 ```
 
@@ -240,15 +242,103 @@ Run the code generator using build_runner:
 dart run build_runner build
 ```
 
+## NEW: Fake Data & CopyWith (v2.1.0+)
+
+### Fake Data Generation
+
+Generate realistic test data for development and testing:
+
+```dart
+@Entityfy(generateEntity: true, generateFakeList: true)
+class ProductModel {
+  final String id;
+  final String name;
+  final double price;
+  final bool isAvailable;
+  final DateTime createdAt;
+  final List<String> tags;
+
+  const ProductModel({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.isAvailable,
+    required this.createdAt,
+    required this.tags,
+  });
+}
+
+part 'product_model.entityfy.g.dart';
+
+// Usage:
+final fakeProducts = ProductEntity.fakeList(count: 50);
+// Generates 50 realistic ProductEntity instances with mock data
+```
+
+### CopyWith Methods
+
+All generated classes include `copyWith()` methods for immutable updates:
+
+```dart
+@Entityfy(generateEntity: true, generateUiModel: true)
+class UserModel {
+  final String id;
+  final String name;
+  final String email;
+  final bool isActive;
+
+  const UserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.isActive,
+  });
+}
+
+// Usage:
+final originalEntity = userModel.toEntity();
+final updatedEntity = originalEntity.copyWith(
+  name: 'New Name',
+  isActive: false,
+);
+
+final updatedUiModel = originalEntity.toUiModel().copyWith(
+  email: 'newemail@example.com',
+);
+```
+
+### Configuration Combinations
+
+Mix and match generation options:
+
+```dart
+// Entity + Fake Data only
+@Entityfy(generateEntity: true, generateFakeList: true)
+class TestModel { /* ... */ }
+
+// All features combined
+@Entityfy(
+  generateEntity: true,
+  generateUiModel: true,
+  generateFakeList: true,
+)
+class CompleteModel { /* ... */ }
+
+// Only fake data (for existing entities)
+@Entityfy(generateFakeList: true)
+class MockDataModel { /* ... */ }
+```
+
 ## How It Works
 
 1. **Annotation Processing**: The generator scans your code for classes annotated with `@Entityfy`
-2. **Configuration Analysis**: Reads boolean flags (`generateEntity`, `generateUiModel`) to determine what to generate
-3. **Class Generation**: Creates complete Entity and/or UI Model classes with constructors, `fromJson()`, and `toJson()` methods
+2. **Configuration Analysis**: Reads boolean flags (`generateEntity`, `generateUiModel`, `generateFakeList`) to determine what to generate
+3. **Class Generation**: Creates complete Entity and/or UI Model classes with constructors, `fromJson()`, `toJson()`, and `copyWith()` methods
 4. **Type Analysis**: Analyzes the source classes to understand their structure and relationships
 5. **Mapper Generation**: Creates extension methods with `toEntity()` and `toUiModel()` functions
-6. **Nested Handling**: Automatically detects nested models and applies recursive conversion
-7. **Combined Output**: Generates all code in a single `.entityfy.g.dart` file per source file
+6. **Fake Data Generation**: Generates static `fakeList()` methods with realistic mock data when `generateFakeList: true`
+7. **Nested Handling**: Automatically detects nested models and applies recursive conversion
+8. **Combined Output**: Generates all code in a single `.entityfy.g.dart` file per source file
 
 ## Best Practices
 
@@ -259,6 +349,9 @@ dart run build_runner build
 - **Clean Builds**: Use `dart run build_runner clean` when encountering generation issues
 - **Nested Models**: Annotate all nested models that need conversion for automatic recursive mapping
 - **DateTime Handling**: The generator automatically handles DateTime serialization with ISO8601 format
+- **Fake Data Usage**: Use `generateFakeList: true` for models that need test data generation *(v2.1.0+)*
+- **CopyWith Pattern**: Leverage generated `copyWith()` methods for immutable updates in your domain logic *(v2.1.0+)*
+- **Testing Strategy**: Combine fake data generation with copyWith methods for comprehensive testing scenarios *(v2.1.0+)*
 
 ## Clean Architecture Integration
 

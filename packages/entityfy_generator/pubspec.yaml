@@ -1,6 +1,6 @@
 name: entityfy_generator
 description: Code generator for creating extension methods to map model classes to entity classes using annotations.
-version: 2.0.1
+version: 2.1.0
 homepage: https://github.com/Sirtoolkit/entityfy
 repository: https://github.com/Sirtoolkit/entityfy
 issue_tracker: https://github.com/Sirtoolkit/entityfy/issues
@@ -27,7 +27,7 @@ dependencies:
   source_gen: ^2.0.0
   build: ^2.5.4
   analyzer: ^7.4.0
-  entityfy: ^2.0.1
+  entityfy: ^2.1.0
 
 dev_dependencies:
   lints: ^6.0.0

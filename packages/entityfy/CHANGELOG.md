@@ -1,3 +1,21 @@
+## 2.1.0
+
+### Summary
+This minor release introduces fake data generation capabilities for testing and development, along with enhanced documentation and improved package description.
+
+### Added
+- **🧪 Fake Data Generation**: New `generateFakeList` parameter for creating mock data during testing and development
+- **📊 Testing Support**: Automatic generation of static `fakeList()` methods within Entity classes for creating realistic test data
+- **🔄 CopyWith Method**: Automatic generation of `copyWith()` methods for both Entity and UI Model classes enabling immutable updates
+- **🔧 Enhanced Configuration**: Extended annotation flexibility with three boolean flags: `generateEntity`, `generateUiModel`, and `generateFakeList`
+
+### Improved
+- **📝 Enhanced Documentation**: Comprehensive examples showcasing all annotation combinations including fake data usage
+- **📦 Package Description**: Updated description to better reflect the `toEntity()` method generation capabilities
+- **🎯 Usage Examples**: Added detailed examples for fake data generation in testing scenarios
+- **📚 Clean Architecture Guide**: Expanded Clean Architecture integration documentation with practical examples
+- **🔗 Reference Section**: Added comprehensive references for Clean Architecture and design patterns
+
 ## 2.0.1
 
 ### Summary

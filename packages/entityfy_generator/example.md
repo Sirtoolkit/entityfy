@@ -6,10 +6,10 @@ This example shows how to use `entityfy_generator` to automatically generate ent
 
 ```yaml
 dependencies:
-  entityfy: ^2.0.1
+  entityfy: ^2.1.0
 
 dev_dependencies:
-  entityfy_generator: ^2.0.1
+  entityfy_generator: ^2.1.0
   build_runner: ^2.5.4
 ```
 
@@ -51,13 +51,39 @@ class UserModel {
 }
 ```
 
-## 3. Run Code Generation
+## 3. NEW: Fake Data Generation (v2.1.0+)
+
+```dart
+// lib/models/product_model.dart
+import 'package:entityfy/entityfy.dart';
+
+part 'product_model.entityfy.g.dart';
+
+@Entityfy(generateEntity: true, generateFakeList: true)
+class ProductModel {
+  final String id;
+  final String name;
+  final double price;
+  final bool isAvailable;
+  final DateTime createdAt;
+
+  const ProductModel({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.isAvailable,
+    required this.createdAt,
+  });
+}
+```
+
+## 4. Run Code Generation
 
 ```bash
 dart run build_runner build
 ```
 
-## 4. Use Generated Code
+## 5. Use Generated Code
 
 ```dart
 // The generator creates these classes and extensions:
@@ -68,6 +94,21 @@ class UserEntity {
   final String name;
   final String email;
   final DateTime createdAt;
+
+  // NEW: Generated copyWith method (v2.1.0+)
+  UserEntity copyWith({
+    String? id,
+    String? name,
+    String? email,
+    DateTime? createdAt,
+  }) {
+    return UserEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
   // ... constructors and methods
 }
 
@@ -77,7 +118,40 @@ class UserUiModel {
   final String name;
   final String email;
   final DateTime createdAt;
+
+  // NEW: Generated copyWith method (v2.1.0+)
+  UserUiModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    DateTime? createdAt,
+  }) {
+    return UserUiModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
   // ... constructors and methods
+}
+
+// NEW: Generated fake data methods (v2.1.0+)
+class ProductEntity {
+  // ... properties and methods
+
+  // Static method for generating fake data
+  static List<ProductEntity> fakeList({int count = 20}) {
+    return List.generate(count, (index) {
+      return ProductEntity(
+        id: 'id $index',
+        name: 'name $index',
+        price: index.toDouble(),
+        isAvailable: index % 2 == 0,
+        createdAt: DateTime.now().subtract(Duration(days: index)),
+      );
+    });
+  }
 }
 
 // Generated mapper extensions
@@ -100,7 +174,7 @@ extension UserEntityUiModelMapper on UserEntity {
 }
 ```
 
-## 5. Use in Your App
+## 6. Use in Your App
 
 ```dart
 void main() {
@@ -117,10 +191,35 @@ void main() {
   // Convert entity to UI model
   final uiModel = entity.toUiModel();
   
+  // NEW: Use copyWith for immutable updates (v2.1.0+)
+  final updatedEntity = entity.copyWith(name: 'Jane Doe');
+  final updatedUiModel = uiModel.copyWith(email: 'jane@example.com');
+  
+  // NEW: Generate fake data for testing (v2.1.0+)
+  final fakeProducts = ProductEntity.fakeList(count: 10);
+  
   print('Model: ${model.name}');
   print('Entity: ${entity.name}');
   print('UI Model: ${uiModel.name}');
+  print('Updated Entity: ${updatedEntity.name}');
+  print('Generated ${fakeProducts.length} fake products');
 }
+```
+
+## 7. NEW: Configuration Options (v2.1.0+)
+
+```dart
+// Generate only entity with fake data
+@Entityfy(generateEntity: true, generateFakeList: true)
+class TestModel { /* ... */ }
+
+// Generate entity, UI model, and fake data
+@Entityfy(generateEntity: true, generateUiModel: true, generateFakeList: true)
+class CompleteModel { /* ... */ }
+
+// Generate only fake data (for existing entities)
+@Entityfy(generateEntity: false, generateUiModel: false, generateFakeList: true)
+class FakeDataModel { /* ... */ }
 ```
 
 For more examples, see the [example](example/) directory.

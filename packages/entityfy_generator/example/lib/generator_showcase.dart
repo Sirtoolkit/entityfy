@@ -177,3 +177,110 @@ class CategoryEntity {
     };
   }
 }
+
+/// Transportation model - demonstrates fake data generation
+/// This will generate TransportationEntity and fake data methods
+@Entityfy(generateEntity: true, generateFakeList: true)
+class TransportationModel {
+  const TransportationModel({
+    required this.id,
+    required this.plateNumber,
+    required this.brand,
+    required this.model,
+    required this.year,
+    required this.color,
+    required this.vin,
+    required this.axles,
+    this.isActive = true,
+  });
+
+  factory TransportationModel.fromJson(Map<String, dynamic> json) {
+    return TransportationModel(
+      id: json['id'] as int,
+      plateNumber: json['plateNumber'] as String,
+      brand: json['brand'] as String,
+      model: json['model'] as String,
+      year: json['year'] as int,
+      color: json['color'] as String,
+      vin: json['vin'] as String,
+      axles: json['axles'] as int,
+      isActive: json['isActive'] as bool? ?? true,
+    );
+  }
+
+  final int id;
+  final String plateNumber;
+  final String brand;
+  final String model;
+  final int year;
+  final String color;
+  final String vin;
+  final int axles;
+  final bool isActive;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'plateNumber': plateNumber,
+      'brand': brand,
+      'model': model,
+      'year': year,
+      'color': color,
+      'vin': vin,
+      'axles': axles,
+      'isActive': isActive,
+    };
+  }
+}
+
+/// Product model - demonstrates fake data with both entity and UI model
+@Entityfy(generateEntity: true, generateUiModel: true, generateFakeList: true)
+class ProductModel {
+  const ProductModel({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.tags,
+    required this.createdAt,
+    this.updatedAt,
+    required this.isAvailable,
+  });
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      price: (json['price'] as num).toDouble(),
+      description: json['description'] as String,
+      tags: (json['tags'] as List<dynamic>).cast<String>(),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
+      isAvailable: json['isAvailable'] as bool,
+    );
+  }
+
+  final String id;
+  final String name;
+  final double price;
+  final String description;
+  final List<String> tags;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final bool isAvailable;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'description': description,
+      'tags': tags,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'isAvailable': isAvailable,
+    };
+  }
+}

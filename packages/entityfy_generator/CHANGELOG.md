@@ -1,3 +1,21 @@
+## 2.1.0
+
+### Summary
+This minor release introduces fake data generation capabilities and copyWith method generation, along with enhanced code generation features and improved package metadata for better developer experience.
+
+### Added
+- **🧪 Fake Data Generation**: New support for `generateFakeList` parameter to create static mock data methods within Entity classes
+- **🔄 CopyWith Methods**: Automatic generation of `copyWith()` methods for both Entity and UI Model classes
+- **📊 Testing Support**: Static `fakeList(count: int)` methods for creating realistic test data with configurable count
+- **🔧 Enhanced Generator Logic**: Extended generator to handle three boolean configuration flags simultaneously
+
+### Improved
+- **📝 Enhanced Documentation**: Comprehensive examples showcasing fake data generation and copyWith usage
+- **📦 Package Metadata**: Updated description and metadata for better discoverability on pub.dev
+- **🎯 Code Generation Quality**: Improved generated code structure and organization
+- **🛡️ Type Safety**: Enhanced type handling for complex nested structures in copyWith methods
+- **📚 Example Showcase**: Updated example project with comprehensive fake data demonstrations
+
 ## 2.0.1
 
 ### Summary

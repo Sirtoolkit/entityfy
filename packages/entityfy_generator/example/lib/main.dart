@@ -1,24 +1,74 @@
 import 'generator_showcase.dart';
-import 'generated_code_demo.dart';
 
 void main() {
-  print('Entityfy Generator Example');
-  print('=========================');
+  print('=== Entityfy Generator - Fake Data Showcase ===\n');
 
-  // Show the models before generation
-  demonstrateModels();
+  // Example: Fake Data Generation - NEW FEATURE!
+  print('🚀 Generating fake data for testing:\n');
 
-  print('\n${'=' * 50}');
+  // Generate fake transportation data
+  print('📦 Transportation Data:');
+  final fakeTransportations = TransportationEntity.fakeList(count: 5);
+  print(
+    '   Generated ${fakeTransportations.length} fake transportation entities:',
+  );
+  for (int i = 0; i < fakeTransportations.length; i++) {
+    final transport = fakeTransportations[i];
+    print(
+      '   ${i + 1}. ${transport.brand} ${transport.model} (${transport.year})',
+    );
+    print('      Plate: ${transport.plateNumber} | VIN: ${transport.vin}');
+    print(
+      '      Color: ${transport.color} | Axles: ${transport.axles} | Active: ${transport.isActive}',
+    );
+  }
+  print('');
 
-  // Show what the generator produces
-  demonstrateGeneratedCode();
-  demonstrateNestedGeneration();
+  // Generate fake product data
+  print('🛍️ Product Data:');
+  final fakeProducts = ProductEntity.fakeList(count: 3);
+  print('   Generated ${fakeProducts.length} fake product entities:');
+  for (int i = 0; i < fakeProducts.length; i++) {
+    final product = fakeProducts[i];
+    print(
+      '   ${i + 1}. ${product.name} - \$${product.price.toStringAsFixed(2)}',
+    );
+    print('      Description: ${product.description}');
+    print('      Available: ${product.isAvailable} | Tags: ${product.tags}');
+    print('      Created: ${product.createdAt.toString().substring(0, 10)}');
+  }
+  print('');
 
-  print('\n📝 To see the generator in action:');
-  print('1. Run: dart pub get');
+  // Demonstrate custom count
+  print('🔢 Custom Count Example:');
+  final manyProducts = ProductEntity.fakeList(count: 100);
+  print('   Generated ${manyProducts.length} products for load testing');
+
+  final manyTransports = TransportationEntity.fakeList(count: 50);
+  print(
+    '   Generated ${manyTransports.length} transportation units for simulation',
+  );
+  print('');
+
+  // Show JSON serialization of fake data
+  print('📄 JSON Serialization:');
+  final sampleProduct = fakeProducts.first;
+  print('   Sample product as JSON:');
+  print('   ${sampleProduct.toJson()}');
+  print('');
+
+  print('=== Fake Data Use Cases ===');
+  print('✅ Unit testing with consistent mock data');
+  print('✅ UI development with placeholder content');
+  print('✅ Load testing with large datasets');
+  print('✅ Demo environments with realistic data');
+  print('✅ Database seeding for development');
+  print('✅ API testing with varied scenarios');
+
+  print('\n📝 How to use:');
+  print('1. Add @Entityfy(generateFakeList: true) to your model');
   print('2. Run: dart run build_runner build');
-  print('3. Check the generated .entityfy.g.dart file');
-  print('4. Use the generated extension methods!');
+  print('3. Use: YourEntityFakeData.fakeList(count: 20)');
 }
 
 void demonstrateModels() {

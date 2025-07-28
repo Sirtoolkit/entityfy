@@ -6,10 +6,12 @@ import 'package:meta/meta_meta.dart';
 /// This annotation generates different types of code based on boolean parameters:
 /// - Entity class generation and toEntity() mapper (when `generateEntity: true`)
 /// - UI Model class generation and toUiModel() mapper (when `generateUiModel: true`)
+/// - Fake data methods for testing (when `generateFakeList: true`)
 ///
 /// The generator automatically creates class names based on the source class:
 /// - For entity: `CustomerModel` → `CustomerEntity`
 /// - For UI model: `CustomerModel` → `CustomerUiModel` or `CustomerEntity` → `CustomerUiModel`
+/// - For fake data: Generates static `fakeList()` method within the Entity class
 ///
 /// ## Examples
 ///
@@ -25,6 +27,19 @@ import 'package:meta/meta_meta.dart';
 /// }
 /// ```
 /// Generates: `CustomerEntity` class + `CustomerModel.toEntity()` mapper
+///
+/// Generate entity and fake data:
+/// ```dart
+/// @Entityfy(generateEntity: true, generateFakeList: true)
+/// class TransportationModel {
+///   final int id;
+///   final String plateNumber;
+///   final String brand;
+///   // ...
+/// }
+/// ```
+/// Generates: `TransportationEntity` + static `fakeList()` method within the Entity class
+/// Usage: `final fakeData = TransportationEntity.fakeList(count: 20);`
 ///
 /// Generate entity and UI model:
 /// ```dart
@@ -47,6 +62,17 @@ import 'package:meta/meta_meta.dart';
 /// }
 /// ```
 /// Generates: `CustomerUiModel` class + `CustomerEntity.toUiModel()` mapper
+///
+/// Generate only fake data:
+/// ```dart
+/// @Entityfy(generateEntity: false, generateUiModel: false, generateFakeList: true)
+/// class TestDataModel {
+///   final String id;
+///   final String name;
+///   // ...
+/// }
+/// ```
+/// Generates: static `fakeList()` method within the Entity class for testing purposes
 @Target({TargetKind.classType})
 @sealed
 class Entityfy {
@@ -58,12 +84,20 @@ class Entityfy {
   /// Default: false
   final bool generateUiModel;
 
+  /// Whether to generate fake data methods for testing and development.
+  /// Generates static methods like `fakeList()` that return mock data.
+  /// Default: false
+  final bool generateFakeList;
+
   /// Creates an [Entityfy] annotation.
   ///
-  /// At least one of [generateEntity] or [generateUiModel] must be true.
-  const Entityfy({this.generateEntity = true, this.generateUiModel = false})
-    : assert(
-        generateEntity || generateUiModel,
-        'At least one of generateEntity or generateUiModel must be true',
+  /// At least one of [generateEntity], [generateUiModel], or [generateFakeList] must be true.
+  const Entityfy({
+    this.generateEntity = true, 
+    this.generateUiModel = false,
+    this.generateFakeList = false,
+  }) : assert(
+        generateEntity || generateUiModel || generateFakeList,
+        'At least one of generateEntity, generateUiModel, or generateFakeList must be true',
       );
 }
